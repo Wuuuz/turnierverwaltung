@@ -200,7 +200,7 @@ class TurnierplanerstellungController extends Controller
 //                        //Spielzeit hochzaehlen, wenn eine Runde durch ist
 //                        $derzSpielzeit->add(new \DateInterval("PT" . $spielZeit . "M"));
 //
-//                        //Tag wechseln
+//                        /Tag wechseln
 //                        if ($derzSpielzeit == $endSpielzeit) {
 //
 //                            $derzTurniertagID = 1;
