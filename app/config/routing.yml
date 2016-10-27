@@ -1,0 +1,15 @@
+teilnehmer:
+    resource: "@TeilnehmerBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+turnierplan:
+    resource: "@TurnierplanBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
+app:
+    resource: "@AppBundle/Controller/"
+    type:     annotation
+logout:
+    path: /logout
