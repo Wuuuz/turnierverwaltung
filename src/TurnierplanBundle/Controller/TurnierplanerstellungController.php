@@ -4,6 +4,7 @@ namespace TurnierplanBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Validator\Constraints\DateTime;
 use TurnierplanBundle\Entity\Altersklasse;
 use TurnierplanBundle\Entity\Endrundenspiel;
 use TurnierplanBundle\Entity\Hauptrundenspiel;
@@ -13,6 +14,10 @@ use TurnierplanBundle\Entity\Vorrundenspiel;
 use TeilnehmerBundle\Entity\Mannschaft;
 use TurnierplanBundle\Entity\Spieltag;
 
+/**
+ * Class TurnierplanerstellungController
+ * @package TurnierplanBundle\Controller
+ */
 class TurnierplanerstellungController extends Controller
 {
     /**
@@ -118,59 +123,19 @@ class TurnierplanerstellungController extends Controller
             ->getRepository('TurnierplanBundle:Turniertag')
             ->findBy(array(),array('uhrzBeginn' => 'ASC'));
 
+        $anfangsZeit = $turniertage[0]->getUhrzBeginn();
+        $anfangsZeitTemp = clone $anfangsZeit;
+
         if($typ == 1) {
             //$spielZeit = $anzSp*$gesamtZeit/$gesamtSpiele;
-            $this->verteileSpieleAufFelder($verteilungsArray,0,2,$turniertage,15);
+            $this->verteileSpieleAufFelder($verteilungsArray,0,2,15,$anfangsZeit, $turniertage);
         } // Spiele gleichmäßig auf Felder verteilt ohne Spielfeldtreue
-        if($typ == 2)
+        if($typ == 2) //Gleichmäßige Verteilung mit Spielfeldtreue
         {
-//            $meistenSpiele = 0;
-//
-//            for($i = 0; $i < count($verteilungsArray); $i++){
-//                $meistenSpieleTemp = 0;
-//
-//                foreach($verteilungsArray[$i] as $spieltagWrapper)
-//                    $meistenSpieleTemp += $spieltagWrapper->getAnzSpiele();
-//
-//                if($meistenSpieleTemp > $meistenSpiele)
-//                    $meistenSpiele = $meistenSpieleTemp;
-//            }
-//
-//            $spielZeit = $gesamtZeit/$meistenSpiele;
-//
-//
-//            for($i = 0; $i < count($verteilungsArray); $i++)
-//            {
-//                foreach($verteilungsArray[$i] as $spieltag)
-//                {
-//                    foreach($spieltag as $spiel)
-//                    {
-//                        //Spielspezifika setzen
-//                        $spiel->setTurniertag($derzTurniertag);
-//                        $spiel->setUhrzeit($derzSpielzeit);
-//                        $spiel->setSpielfeld($i + 1);
-
-                        //Genaue Implementierung noch anschauen!
-//                        $em->persist($spiel);
-//                        $em->flush();
-//
-//                        $derzPlatz++;
-//
-//                        //Spielzeit hochzaehlen, wenn eine Runde durch ist
-//                        $derzSpielzeit->add(new \DateInterval("PT" . $spielZeit . "M"));
-//
-//                        /Tag wechseln
-//                        if ($derzSpielzeit == $endSpielzeit) {
-//
-//                            $derzTurniertagID = 1;
-//                            $derzTurniertag = $turniertage[$derzTurniertagID];
-//                            $derzSpielzeit = $turniertage[$derzTurniertagID]->getUhrzBeginn();
-//                            $endSpielzeit = $turniertage[$derzTurniertagID]->getUhrzEnde();
-//                            $derzPlatz = 0;
-//                        }
-//                    }
-//                }
-//            }
+            for($i = 0; $i < count($verteilungsArray); $i++) {
+                $this->verteileSpieleAufFelder($verteilungsArray[$i], $i, 1, 8,$anfangsZeit,$turniertage);
+                $anfangsZeit = $anfangsZeitTemp;
+            }
         }
 
         return $this->render('TurnierplanBundle:Default:index.html.twig');
@@ -654,7 +619,7 @@ class TurnierplanerstellungController extends Controller
      * @param $turniertage Zu besetzende Turniertage
      * @param $spielZeit Spielzeit
      */
-    private function verteileSpieleAufFelder($verteilungsArray, $anfangFeld, $anzFelder, $turniertage, $spielZeit)
+    private function verteileSpieleAufFelder($verteilungsArray, $anfangFeld, $anzFelder, $spielZeit, $anfangsZeit, $turniertage)
     {
         $gesamtZeit = 0;
 
@@ -662,7 +627,7 @@ class TurnierplanerstellungController extends Controller
             $gesamtZeit += abs($turniertag->getUhrzEnde()->getTimestamp() - $turniertag->getUhrzBeginn()->getTimestamp())/60;
 
         $derzTurniertagID = 0;
-        $derzSpielzeit = $turniertage[$derzTurniertagID]->getUhrzBeginn();
+        $derzSpielzeit = $anfangsZeit;
         $endSpielzeit = $turniertage[$derzTurniertagID]->getUhrzEnde();
         $derzTurniertag = $turniertage[$derzTurniertagID];
         $derzPlatz = $anfangFeld;
@@ -675,17 +640,23 @@ class TurnierplanerstellungController extends Controller
                 //Spielspezifika setzen
                 $spiel->setTurniertag($derzTurniertag);
                 $spiel->setUhrzeit($derzSpielzeit);
-                $spiel->setSpielfeld($derzPlatz % $anzFelder + 1);
+                if ($anzFelder > 1)
+                    $spiel->setSpielfeld($derzPlatz % $anzFelder + 1);
+                else
+                    $spiel->setSpielfeld($derzPlatz+1);
 
                 $em->persist($spiel);
                 $em->flush();
 
-                $derzPlatz++;
+                if ($anzFelder > 1)
+                    $derzPlatz++;
 
                 //Spielzeit hochzaehlen, wenn eine Runde durch ist
-                if ($derzPlatz % $anzFelder == (0+$anfangFeld)) {
+                if ($anzFelder == 1)
                     $derzSpielzeit->add(new \DateInterval("PT" . $spielZeit . "M"));
-                }
+                else if ($derzPlatz % $anzFelder == (0+$anfangFeld))
+                    $derzSpielzeit->add(new \DateInterval("PT" . $spielZeit . "M"));
+
                 //Tag wechseln
                 if ($derzSpielzeit == $endSpielzeit) {
                     $derzTurniertagID++;
@@ -696,6 +667,11 @@ class TurnierplanerstellungController extends Controller
                 }
             }
         }
+    }
+
+    private function pruefeVereinskollision()
+    {
+
     }
 
     /**
