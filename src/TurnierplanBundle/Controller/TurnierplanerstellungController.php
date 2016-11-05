@@ -25,7 +25,7 @@ class TurnierplanerstellungController extends Controller
      */
     public function testAction()
     {
-        $this->pruefeVereinskollision(2);
+        //$this->pruefeVereinskollision(2);
 
         return $this->render('TurnierplanBundle:Default:index.html.twig');
     }
