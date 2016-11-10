@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Startseite{% endblock %}
+
+{% block sidecontent %}
+
+    <style>
+
+
+        body
+        {
+            background-color: #f8f8f8 !important;
+        }
+        .container
+        {
+            background-color: #f8f8f8 !important;
+            margin-top: 5% !important;
+        }
+
+        img
+        {
+            width:30%;
+            height:auto;
+        }
+
+        div.navbar.navbar-default
+        {
+            height:20%;
+            background-color:rgba(99, 97, 97,0.9)!important;
+            margin-top: 0% !important;
+            color: white !important;
+
+        }
+
+        a.btn.btn-default
+        {
+            background-color: rgba(150, 34, 34, 0.87) !important;
+            border-color: rgba(150, 34, 34, 0.87) !important;
+            color: white !important;
+        }
+
+        .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
+            position: relative;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+            margin-top: 2.5% !important;
+        }
+    </style>
+
+    <body>
+        <div align="center">
+            {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="https://image.freepik.com/free-icon/black-male-user-symbol_318-60703.jpg" alt="...">
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default" role="button">Benutzer</a></p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="https://image.freepik.com/free-icon/multiple-users-silhouette_318-49546.png" alt="...">
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default" role="button">Teilnehmer</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="http://rlv.zcache.com/black_handball_icon_classic_round_sticker-rdfd03822ec2a47aaa7c674b8d6513ec9_v9waf_8byvr_324.jpg" alt="...">
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default" role="button">Spielplan</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="https://image.freepik.com/freie-ikonen/pokal-mit-deckel_318-62766.jpg" alt="...">
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default" role="button">Turnier</a></p>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-sm-6 col-md-4">
+                <div class="thumbnail">
+                    <img src="https://image.freepik.com/freie-ikonen/bildschirm-prasentation-ios-7-schnittstelle-symbol_318-36498.jpg" alt="...">
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default" role="button">Livescreen</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+{% endblock %}
