@@ -16,6 +16,9 @@ security:
          # require ROLE_ADMIN for /admin*
          - { path: ^/admin, roles: ROLE_ADMIN }
 
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_SR_ERFASSUNG,ROLE_ABLAUF,ROLE_ERGEBNIS_ERFASSUNG]
+
     firewalls:
         secured_area:
             anonymous: ~

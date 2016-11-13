@@ -1,37 +1,25 @@
-{# app/Resources/views/security/login.html.twig #}
-{# ... you will probably extend your base template, like base.html.twig #}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <meta charset="UTF-8">
+    <title>{% block title %}Turnierverwaltung{% endblock %}</title>
+
+    {% block stylesheets %}
+        {% stylesheets
+            'bundles/app/css/*'
+            'bundles/app/css/login/*'
+        filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+
+    {% javascripts '@AppBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 </head>
 
 <style>
-    body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        background-color: #f8f8f8 !important;
-    }
-    .btn-success {
-        color: #fff;
-        background-color: rgba(150, 34, 34, 0.87) !important ;
-        border-color: rgba(150, 34, 34, 0.87) !important;
-    }
-    .btn-success:hover
-    {
-        background-color:rgba(150,34,34,0.7)!important;
-        border-color: rgba(150,34,34,0.7)!important;
-    }
 
-    .panel-default>.panel-heading {
-        color: #fff;
-        background-color: rgba(99, 97, 97,0.9)!important ;
-        border-color: rgba(99, 97, 97,0.9)!important ; }
 </style>
 
 <body>
@@ -60,14 +48,6 @@
         </div>
     </div>
 </div>
-
-<!-- Metis Menu Plugin JavaScript -->
-<script src="../vendor/metisMenu/metisMenu.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="../dist/js/sb-admin-2.js"></script>
-
-
 
 </body>
 </html>

@@ -1,129 +1,22 @@
-
 <!DOCTYPE html>
 <html>
-
 <head>
-
     <meta charset="UTF-8">
     <title>{% block title %}Turnierverwaltung{% endblock %}</title>
 
-    {% stylesheets 'bundles/app/css/*' filter='cssrewrite' %}
-    <link rel="stylesheet" href="{{ asset_url }}" />
-    {% endstylesheets %}
+    {% block stylesheets %}
+        {% stylesheets
+            'bundles/app/css/*'
+            'bundles/app/css/base/*'
+        filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
 
     {% javascripts '@AppBundle/Resources/public/js/*' %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 </head>
-
-<style>
-    img
-    {
-        width:28% !important;
-        margin-top:3% !important;
-        margin-left: 40% !important;
-    }
-
-    ul#side-menu.nav >li>a:hover
-    {
-        background-color: rgba(150, 34, 34, 0.87) !important;
-    }
-
-    ul.nav.navbar-nav >li:hover
-    {
-        background-color: #f8f8f8 !important;
-    }
-
-    .element.style
-    {
-        color: rgb(116,21,21) !important;
-    }
-
-    #bs-example-navbar-collapse-1 {
-        background-color: rgba(99, 97, 97,0.9)!important;
-    }
-
-    .navbar-default .navbar-brand
-    {
-        color: white !important;
-
-    }
-
-    .navbar-default .navbar-nav>li>a {
-        color: white;
-    }
-
-    .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
-        color: white;
-
-    }
-    .navbar-default .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover {
-        color: #333;
-        background-color: #ddd;
-    }
-
-    #bs-example-navbar-collapse-1
-    {
-        background-color: rgba(208,205,205,1);
-    }
-
-    .nav>li>a:focus, .nav>li>a:hover {
-        text-decoration: none;
-
-    }
-
-
-
-    a{
-        color:black;
-    }
-
-    a:focus, a:hover {
-        color: white;
-
-    }
-
-    .sidebar
-    {
-        z-index: 1;
-        position: absolute;
-        margin-top: 0.5px;
-        width: 11%;
-    }
-
-    #page-wrapper {
-
-        position: inherit;
-        margin: 0 0 0 11%;
-        padding: 0 0 0 1%;
-        border-left: 1px solid #e7e7e7;
-    }
-
-    ul.nav.navbar-nav
-    {
-        margin-left:13%;
-    }
-
-
-    .navbar-brand {
-        float: left;
-        height: 50px;
-        padding: 15px 15px;
-        padding-top: 0px !important;
-        padding-right: 0px !important;
-        padding-bottom: 0px !important;
-        padding-left: 0px !important;
-        font-size: 150% !important;
-        line-height: 20px;
-    }
-
-    -webkit-focus-ring-color user agent stylesheet:focus
-    {
-        outline-color: rgb(170,15,9);
-    }
-</style>
-
-
 
 <body>
     <div id="wrapper">
@@ -136,36 +29,53 @@
                     <span class="icon-bar"></span>
 
                     <!-- Menuepunkt Startseite -->
-                    <a class="navbar-brand" href="#" />
+                    <a class="navbar-brand" href="/"/>
                 </div>
 
                 <!-- Topmenue -->
                 <div class="navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
+                        {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="#">Turnier</a></li>
                         <li><a href="#">Benutzer</a></li>
+                        {% endif %}
+                        {% if is_granted('ROLE_SR_ERFASSUNG') %}
                         <li class="dropdown">
                             <a href="#" class=" dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teilnehmer<span class="caret"></span></a>
                             <ul class="dropdown-menu">
+                                {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="#">Verein</a></li>
                                 <li><a href="#">Mannschaft</a></li>
+                                {% endif %}
                                 <li><a href="#">Schiedsrichter</a></li>
                             </ul>
                         </li>
+                        {% endif %}
+
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
                                aria-expanded="false">Spielplan<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li role="presentation" class="disabled"><a href="#">Spielplanübersicht</a></li>
+                                <li><a href="#">Spielplanübersicht</a></li>
+                                {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="#">Spielplanerstellung</a></li>
+                                {% endif %}
+                                {% if is_granted('ROLE_ERGEBNIS_ERFASSUNG') %}
                                 <li><a href="#">Ergebniserfassung</a></li>
+                                {% endif %}
+                                {% if is_granted('ROLE_SR_ERFASSUNG') %}
                                 <li><a href="#">Schiedsrichtereinteilung</a></li>
+                                {% endif %}
+                                {% if is_granted('ROLE_ADMIN') %}
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"> <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Drucken</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"> <span class="glyphicon glyphicon-education" aria-hidden="true"></span> Urkunden</a></li>
+                                {% endif %}
                             </ul>
                         </li>
+                        {% endif %}
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right" >

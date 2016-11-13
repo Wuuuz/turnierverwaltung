@@ -39,6 +39,12 @@ class User implements UserInterface, \Serializable
     */
     private $isActive;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Role", inversedBy="users")
+     * @ORM\JoinTable(name="user_roles")
+     */
+    private $roles;
+
     public function __construct()
     {
         $this->isActive = true;
@@ -65,7 +71,10 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        $roleArray = array();
+        foreach ($this->roles as $role)
+            $roleArray[] = $role->getBezeichnung();
+        return $roleArray;
     }
 
     public function eraseCredentials()
