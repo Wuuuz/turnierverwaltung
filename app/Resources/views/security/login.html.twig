@@ -39,7 +39,9 @@
                             <div class="form-group">
                                 <input class="form-control" placeholder="Passwort" type="password" id="password" name="_password">
                             </div>
-
+                            <input type="hidden" name="_csrf_token"
+                                   value="{{ csrf_token('authenticate') }}"
+                            >
                             <input type="submit" value="Anmelden" class="btn btn-lg btn-success btn-block">
                         </fieldset>
                     </form>
