@@ -29,7 +29,7 @@
                     <span class="icon-bar"></span>
 
                     <!-- Menuepunkt Startseite -->
-                    <a class="navbar-brand" href="/"/>
+                    <a class="navbar-brand" href="/"><span class="glyphicon glyphicon glyphicon-home" aria-hidden="true"></span>     Startseite </a>
                 </div>
 
                 <!-- Topmenue -->
@@ -37,7 +37,7 @@
                     <ul class="nav navbar-nav">
                         {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="#">Turnier</a></li>
-                        <li><a href="#">Benutzer</a></li>
+                        <li><a href="{{ path('benutzer') }}">Benutzer</a></li>
                         {% endif %}
                         {% if is_granted('ROLE_SR_ERFASSUNG') %}
                         <li class="dropdown">
@@ -45,7 +45,7 @@
                             <ul class="dropdown-menu">
                                 {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="#">Verein</a></li>
-                                <li><a href="#">Mannschaft</a></li>
+                                <li><a href="{{ path('mannschaft') }}">Mannschaft</a></li>
                                 {% endif %}
                                 <li><a href="#">Schiedsrichter</a></li>
                             </ul>
@@ -75,6 +75,7 @@
                                 {% endif %}
                             </ul>
                         </li>
+                        <li><a href="/">Live-Screen</a></li>
                         {% endif %}
                     </ul>
 

@@ -13,6 +13,10 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return $this->render('AppBundle::startseite.html.twig');
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->render('@App/startseite/startseite.html.twig');
     }
 }

@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends '@App/base.html.twig' %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -11,8 +11,6 @@
 {% block title %}Startseite{% endblock %}
 
 {% block sidecontent %}
-
-    <body>
         <div align="center">
             {% if is_granted('ROLE_ADMIN') %}
             <div class="col-sm-6 col-md-4">
@@ -21,7 +19,7 @@
                     <img src="{{ asset_url }}" alt="Benutzer" class="startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default" role="button">Benutzer</a></p>
+                        <p><a href="{{ path('benutzer') }}" class="btn btn-default" role="button">Benutzer</a></p>
                     </div>
                 </div>
             </div>
@@ -34,7 +32,7 @@
                     <img src="{{ asset_url }}" alt="Teilnehmer" class="startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default" role="button">Teilnehmer</a></p>
+                        <p><a href="{{ path('mannschaft') }}" class="btn btn-default" role="button">Teilnehmer</a></p>
                     </div>
                 </div>
             </div>
@@ -74,6 +72,4 @@
                 </div>
             </div>
         </div>
-    </body>
-
 {% endblock %}
