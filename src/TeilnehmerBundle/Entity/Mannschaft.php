@@ -131,6 +131,13 @@ class Mannschaft
     private $unterkunft;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="status", type="smallint")
+     */
+    private $status;
+
+    /**
      * Get id
      *
      * @return int
@@ -522,5 +529,29 @@ class Mannschaft
     public function getUnterkunft()
     {
         return $this->unterkunft;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     *
+     * @return Mannschaft
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }
