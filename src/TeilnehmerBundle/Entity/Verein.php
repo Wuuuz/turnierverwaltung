@@ -3,6 +3,7 @@
 namespace TeilnehmerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Verein
@@ -23,8 +24,8 @@ class Verein
 
     /**
      * @var string
-     *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank()
+     * @ORM\Column(name="name", type="string", length=255, unique=true)
      */
     private $name;
 
@@ -41,9 +42,7 @@ class Verein
 
     /**
      * Set name
-     *
      * @param string $name
-     *
      * @return Verein
      */
     public function setName($name)
@@ -55,7 +54,6 @@ class Verein
 
     /**
      * Get name
-     *
      * @return string
      */
     public function getName()

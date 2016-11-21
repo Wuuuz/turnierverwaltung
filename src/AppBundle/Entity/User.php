@@ -71,10 +71,15 @@ class User implements UserInterface, \Serializable
 
     public function getRoles()
     {
-        $roleArray = array();
+        $permissionsArray = array();
         foreach ($this->roles as $role)
-            $roleArray[] = $role->getBezeichnung();
-        return $roleArray;
+        {
+            $rolesPermissions = $role->getPermissions();
+            for($i=0;$i<count($rolesPermissions);$i++)
+                if(!in_array($rolesPermissions[$i],$permissionsArray))
+                    $permissionsArray[] = $rolesPermissions[$i];
+        }
+        return $permissionsArray;
     }
 
     public function eraseCredentials()

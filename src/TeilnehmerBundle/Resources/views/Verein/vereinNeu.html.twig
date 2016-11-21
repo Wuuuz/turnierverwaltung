@@ -1,0 +1,57 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block title %}Verein{% endblock %}
+
+{% block heading %}Verein anlegen{% endblock %}
+
+{% block leftMenu %}
+    <li>
+        <a href="{{ path('vereinUebersicht') }}"><p class="fa fa-Verein fa-fw">Verein</p> </a>
+    </li>
+    <li>
+        <a href="{{ path('mannschaftUebersicht') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Mannschaft</p> </a>
+    </li>
+    <li>
+        <a href="#"><p class="fa fa-bar-Schiedsrichter-o fa-fw">Schiedsrichter</p></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
+            <!-- butttons -->
+            <button id="form_save" name="form[save]" class="btn btn-default btn-lg btn-sm" style="color: rgba(13, 135, 13, 1);" type="submit">
+                <span class="glyphicon glyphicon-check" aria-hidden="true" style="color: rgba(13, 135, 13, 1);"></span><b>  Speichern</b></button>
+
+            <a href="" class="btn btn-default btn-lg btn-sm" style="color:  rgba(66, 66, 66, 1);" type="button">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:  rgba(66, 66, 66, 1);"></span><b> Speichern & Schließen</b></a>
+
+            <a href="" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
+        </div>
+    </div>
+    {% if errors is defined %}
+        <div class="alert alert-danger" role="alert">
+        {% for error in errors %}
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+            <strong>{{ error.message }}</strong>
+        {% endfor %}
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="form-group">
+            <label for="inputName" class="col-md-1 control-label">Vereinsname</label>
+            <div class="col-md-2">
+                {{ form_widget(form.name, {'attr': {'placeholder': 'Vorname'} }) }}
+            </div>
+        </div>
+    </div>
+
+    {{ form_end(form) }}
+{% endblock %}

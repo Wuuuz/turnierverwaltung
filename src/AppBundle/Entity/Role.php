@@ -34,10 +34,10 @@ class Role
     private $users;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Permission", inversedBy="permissions")
+     * @ORM\ManyToMany(targetEntity="Permission", inversedBy="roles")
      * @ORM\JoinTable(name="roles_permissions")
      */
-    private $roles;
+    private $permissions;
 
     /**
      * Get id
@@ -114,38 +114,42 @@ class Role
     {
         return $this->users;
     }
+    
 
     /**
-     * Add role
+     * Add permission
      *
-     * @param \AppBundle\Entity\Permission $role
+     * @param \AppBundle\Entity\Permission $permission
      *
      * @return Role
      */
-    public function addRole(\AppBundle\Entity\Permission $role)
+    public function addPermission(\AppBundle\Entity\Permission $permission)
     {
-        $this->roles[] = $role;
+        $this->permissions[] = $permission;
 
         return $this;
     }
 
     /**
-     * Remove role
+     * Remove permission
      *
-     * @param \AppBundle\Entity\Permission $role
+     * @param \AppBundle\Entity\Permission $permission
      */
-    public function removeRole(\AppBundle\Entity\Permission $role)
+    public function removePermission(\AppBundle\Entity\Permission $permission)
     {
-        $this->roles->removeElement($role);
+        $this->permissions->removeElement($permission);
     }
 
     /**
-     * Get roles
+     * Get permissions
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Array
      */
-    public function getRoles()
+    public function getPermissions()
     {
-        return $this->roles;
+        $permissionsArray = array();
+        foreach ($this->permissions as $permission)
+            $permissionsArray[] = "ROLE_".$permission->getTechBezeichnung();
+        return $permissionsArray;
     }
 }

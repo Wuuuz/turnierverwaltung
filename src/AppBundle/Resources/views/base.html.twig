@@ -44,8 +44,8 @@
                             <a href="#" class=" dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teilnehmer<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="#">Verein</a></li>
-                                <li><a href="{{ path('mannschaft') }}">Mannschaft</a></li>
+                                <li><a href="{{ path('vereinUebersicht') }}">Verein</a></li>
+                                <li><a href="{{ path('mannschaftUebersicht') }}">Mannschaft</a></li>
                                 {% endif %}
                                 <li><a href="#">Schiedsrichter</a></li>
                             </ul>

@@ -24,9 +24,16 @@ class Permission
     /**
      * @var string
      *
-     * @ORM\Column(name="bezeichnung", type="string", length=255, unique=true)
+     * @ORM\Column(name="bezeichnung", type="string", length=255)
      */
     private $bezeichnung;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="techBezeichnung", type="string", length=255, unique=true)
+     */
+    private $techBezeichnung;
 
     /**
      * @ORM\ManyToMany(targetEntity="Role", mappedBy="permissions")
@@ -106,5 +113,29 @@ class Permission
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    /**
+     * Set techBezeichnung
+     *
+     * @param string $techBezeichnung
+     *
+     * @return Permission
+     */
+    public function setTechBezeichnung($techBezeichnung)
+    {
+        $this->techBezeichnung = $techBezeichnung;
+
+        return $this;
+    }
+
+    /**
+     * Get techBezeichnung
+     *
+     * @return string
+     */
+    public function getTechBezeichnung()
+    {
+        return $this->techBezeichnung;
     }
 }
