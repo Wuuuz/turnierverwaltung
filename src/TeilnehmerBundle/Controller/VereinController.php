@@ -22,7 +22,7 @@ class VereinController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render('TeilnehmerBundle:Mannschaft:mannschaftListe.html.twig');
+        return $this->render('@Teilnehmer/Verein/vereinUebersicht.html.twig');
     }
 
     /**
@@ -33,13 +33,50 @@ class VereinController extends Controller
         $verein = new Verein();
 
         $form = $this->createForm(VereinType::class, $verein);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
              $em = $this->getDoctrine()->getManager();
              $em->persist($verein);
              $em->flush();
+
+            if($form->get('save')->isClicked())
+                return $this->redirectToRoute('vereinUebersicht', array('success_neu' => $verein->getName()));
+        }
+        else if($form->isSubmitted()){
+            $validator = $this->get('validator');
+            $errors = $validator->validate($verein);
+
+            return $this->render('TeilnehmerBundle:Verein:vereinNeu.html.twig', array(
+                'form' => $form->createView(),
+                'errors' => $errors,
+            ));
+        }
+
+        return $this->render('TeilnehmerBundle:Verein:vereinNeu.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * @Route("/verein/{id}/edit", name="vereinAendern")
+     */
+    public function editAction($id,Request $request)
+    {
+        $verein = $this->getDoctrine()
+            ->getRepository('TeilnehmerBundle:Verein')
+            ->findOneBy(array('id' => $id));
+
+        $form = $this->createForm(VereinType::class, $verein);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($verein);
+            $em->flush();
+
+            if($form->get('saveAndAdd')->isClicked())
+                return $this->redirectToRoute('vereinUebersicht', array('success' => $verein->getName()));
         }
         else if($form->isSubmitted()){
             $validator = $this->get('validator');

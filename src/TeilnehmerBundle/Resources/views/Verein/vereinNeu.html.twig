@@ -21,18 +21,17 @@
 {% endblock %}
 
 {% block content %}
-    {% form_theme form 'bootstrap_3_layout.html.twig' %}
+    {% form_theme form '@App/Form/fields.html.twig' %}
+
     {{ form_start(form) }}
+
     <div class="row">
         <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
             <!-- butttons -->
-            <button id="form_save" name="form[save]" class="btn btn-default btn-lg btn-sm" style="color: rgba(13, 135, 13, 1);" type="submit">
-                <span class="glyphicon glyphicon-check" aria-hidden="true" style="color: rgba(13, 135, 13, 1);"></span><b>  Speichern</b></button>
+            {{ form_widget(form.save) }}
+            {{ form_widget(form.saveAndClose) }}
 
-            <a href="" class="btn btn-default btn-lg btn-sm" style="color:  rgba(66, 66, 66, 1);" type="button">
-                <span class="glyphicon glyphicon-ok" aria-hidden="true" style="color:  rgba(66, 66, 66, 1);"></span><b> Speichern & Schließen</b></a>
-
-            <a href="" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+            <a href="{{ path('vereinUebersicht') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
                 <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
         </div>
     </div>
@@ -48,7 +47,7 @@
         <div class="form-group">
             <label for="inputName" class="col-md-1 control-label">Vereinsname</label>
             <div class="col-md-2">
-                {{ form_widget(form.name, {'attr': {'placeholder': 'Vorname'} }) }}
+                {{ form_widget(form.name, {'attr': {'placeholder': 'Vereinsname'} }) }}
             </div>
         </div>
     </div>

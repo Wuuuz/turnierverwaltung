@@ -1,0 +1,15 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{%- block button_widget -%}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+            '%name%': name,
+            '%id%': id,
+            }) %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{%-  if button_image is not null -%}<span class="glyphicon glyphicon-{{ button_image }}" aria-hidden="true" style="color: {{ button_color }};"></span>{%- endif -%}<b>{{ translation_domain is same as(false) ? label : label|trans({}, translation_domain) }}</b></button>
+{%- endblock button_widget -%}

@@ -4,3 +4,7 @@ parameters:
 #    parameter_name: value
 
 services:
+  app.submit_type_extension:
+    class: TeilnehmerBundle\Form\Extension\SubmitTypeExtension
+    tags:
+      - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\SubmitType }
