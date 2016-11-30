@@ -1,27 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Turnierverwaltung{% endblock %}</title>
 
     {% block stylesheets %}
         {% stylesheets
-            'bundles/app/css/*'
-            'bundles/app/css/login/*'
-        filter='cssrewrite' %}
+        'bundles/base/css/*'
+        'bundles/user/css/*'
+        filter='cssrewrite' output='css/compiled/app.css'%}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
 
-    {% javascripts '@AppBundle/Resources/public/js/*' %}
-        <script src="{{ asset_url }}"></script>
+
+    {% javascripts
+    'bundles/base/js/*'
+    output='js/compiled/app.js' %}
+    <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 </head>
-
-<style>
-
-</style>
-
 <body>
 <div class="container">
     <div class="row">
@@ -37,7 +35,7 @@
                             <strong>{{ error.messageKey|trans(error.messageData, 'security') }}</strong>
                         </div>
                     {% endif %}
-                    <form role="form" action="{{ path('login') }}" method="post">
+                    <form role="form" action="{{ path('fos_user_security_check') }}" method="post">
                         <fieldset>
                             <div class="form-group">
                                 <input class="form-control" placeholder="Benutzername" id="username" name="_username" value="{{ last_username }}" autofocus>
@@ -45,9 +43,9 @@
                             <div class="form-group">
                                 <input class="form-control" placeholder="Passwort" type="password" id="password" name="_password">
                             </div>
-                            <input type="hidden" name="_csrf_token"
-                                   value="{{ csrf_token('authenticate') }}"
-                            >
+                            {% if csrf_token %}
+                                <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                            {% endif %}
                             <input type="submit" value="Anmelden" class="btn btn-lg btn-success btn-block">
                         </fieldset>
                     </form>

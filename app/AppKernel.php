@@ -19,6 +19,8 @@ class AppKernel extends Kernel
             new TurnierplanBundle\TurnierplanBundle(),
             new TeilnehmerBundle\TeilnehmerBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
+            new UserBundle\UserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

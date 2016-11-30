@@ -5,8 +5,6 @@ namespace TeilnehmerBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use TeilnehmerBundle\Entity\Verein;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use TeilnehmerBundle\Form\VereinType;
 
@@ -14,7 +12,7 @@ use TeilnehmerBundle\Form\VereinType;
 class VereinController extends Controller
 {
     /**
-     * @Route("/verein", name="vereinUebersicht")
+     * @Route("/verein", name="vereinList")
      */
     public function uebersichtAction()
     {
@@ -22,17 +20,18 @@ class VereinController extends Controller
             throw $this->createAccessDeniedException();
         }
 
-        return $this->render('@Teilnehmer/Verein/vereinUebersicht.html.twig');
+        return $this->render('@Teilnehmer/Verein/list.html.twig');
     }
 
     /**
-     * @Route("/verein/neu", name="vereinNeu")
+     * @Route("/verein/neu", name="vereinNew")
      */
     public function neuAction(Request $request)
     {
         $verein = new Verein();
 
-        $form = $this->createForm(VereinType::class, $verein);
+        $form = $this->createForm(VereinType::class,$verein);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -40,8 +39,8 @@ class VereinController extends Controller
              $em->persist($verein);
              $em->flush();
 
-            if($form->get('save')->isClicked())
-                return $this->redirectToRoute('vereinUebersicht', array('success_neu' => $verein->getName()));
+            if($form->get('sichernUndSchliessen')->isClicked())
+                return $this->redirectToRoute('vereinUebersicht');
         }
         else if($form->isSubmitted()){
             $validator = $this->get('validator');
@@ -53,13 +52,13 @@ class VereinController extends Controller
             ));
         }
 
-        return $this->render('TeilnehmerBundle:Verein:vereinNeu.html.twig', array(
-            'form' => $form->createView(),
+        return $this->render('TeilnehmerBundle:Verein:new.html.twig', array(
+            'form' => $form->createView()
         ));
     }
 
     /**
-     * @Route("/verein/{id}/edit", name="vereinAendern")
+     * @Route("/verein/{id}/edit", name="vereinEdit")
      */
     public function editAction($id,Request $request)
     {
@@ -75,8 +74,8 @@ class VereinController extends Controller
             $em->persist($verein);
             $em->flush();
 
-            if($form->get('saveAndAdd')->isClicked())
-                return $this->redirectToRoute('vereinUebersicht', array('success' => $verein->getName()));
+            if($form->get('sichernUndSchliessen')->isClicked())
+                return $this->redirectToRoute('vereinUebersicht');
         }
         else if($form->isSubmitted()){
             $validator = $this->get('validator');
@@ -88,7 +87,7 @@ class VereinController extends Controller
             ));
         }
 
-        return $this->render('TeilnehmerBundle:Verein:vereinNeu.html.twig', array(
+        return $this->render('TeilnehmerBundle:Verein:edit.html.twig', array(
             'form' => $form->createView(),
         ));
     }

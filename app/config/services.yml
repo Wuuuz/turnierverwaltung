@@ -8,3 +8,8 @@ services:
     class: TeilnehmerBundle\Form\Extension\SubmitTypeExtension
     tags:
       - { name: form.type_extension, extended_type: Symfony\Component\Form\Extension\Core\Type\SubmitType }
+
+  app.form.registration:
+    class: UserBundle\Form\GroupFormType
+    tags:
+       - { name: form.type, alias: app_group }

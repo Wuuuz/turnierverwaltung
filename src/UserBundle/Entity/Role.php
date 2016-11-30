@@ -1,16 +1,16 @@
 <?php
 
-namespace AppBundle\Entity;
+namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Permission
+ * Roe
  *
- * @ORM\Table(name="permission")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\PermissionRepository")
+ * @ORM\Table(name="role")
+ * @ORM\Entity(repositoryClass="UserBundle\Repository\RoleRepository")
  */
-class Permission
+class Role
 {
     /**
      * @var int
@@ -24,7 +24,7 @@ class Permission
     /**
      * @var string
      *
-     * @ORM\Column(name="bezeichnung", type="string", length=255)
+     * @ORM\Column(name="bezeichnung", type="string", length=255, unique=true)
      */
     private $bezeichnung;
 
@@ -35,10 +35,6 @@ class Permission
      */
     private $techBezeichnung;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Role", mappedBy="permissions")
-     */
-    private $roles;
 
     /**
      * Get id
@@ -55,7 +51,7 @@ class Permission
      *
      * @param string $bezeichnung
      *
-     * @return Permission
+     * @return Roe
      */
     public function setBezeichnung($bezeichnung)
     {
@@ -73,54 +69,13 @@ class Permission
     {
         return $this->bezeichnung;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->roles = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add role
-     *
-     * @param \AppBundle\Entity\Role $role
-     *
-     * @return Permission
-     */
-    public function addRole(\AppBundle\Entity\Role $role)
-    {
-        $this->roles[] = $role;
-
-        return $this;
-    }
-
-    /**
-     * Remove role
-     *
-     * @param \AppBundle\Entity\Role $role
-     */
-    public function removeRole(\AppBundle\Entity\Role $role)
-    {
-        $this->roles->removeElement($role);
-    }
-
-    /**
-     * Get roles
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
 
     /**
      * Set techBezeichnung
      *
      * @param string $techBezeichnung
      *
-     * @return Permission
+     * @return Roe
      */
     public function setTechBezeichnung($techBezeichnung)
     {
@@ -139,3 +94,4 @@ class Permission
         return $this->techBezeichnung;
     }
 }
+

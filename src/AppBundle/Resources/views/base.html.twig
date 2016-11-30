@@ -6,19 +6,25 @@
 
     {% block stylesheets %}
         {% stylesheets
-            'bundles/app/css/*'
-            'bundles/app/css/base/*'
-        filter='cssrewrite' %}
+            'bundles/base/css/*'
+            'bundles/app/css/04_base.custom.css'
+        filter='cssrewrite' output='css/compiled/app.css'%}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
 
-    {% javascripts '@AppBundle/Resources/public/js/*' %}
-    <script src="{{ asset_url }}"></script>
+    {% javascripts
+        'bundles/base/js/*'
+            output='js/compiled/app.js' %}
+            <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 </head>
 
 <body>
+
+
+
+
     <div id="wrapper">
         <nav class="navbar navbar-default">
             <div class="container-fluid1">
@@ -37,46 +43,34 @@
                     <ul class="nav navbar-nav">
                         {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="#">Turnier</a></li>
-                        <li><a href="{{ path('benutzer') }}">Benutzer</a></li>
                         {% endif %}
-                        {% if is_granted('ROLE_SR_ERFASSUNG') %}
+                        {% if (is_granted('ROLE_USER_VIEW') or is_granted('ROLE_GROUP_VIEW'))  %}
+                        <li><a href="{{ path('fos_user_group_list') }}">Benutzer</a></li>
+                        {% endif %}
                         <li class="dropdown">
                             <a href="#" class=" dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teilnehmer<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                {% if is_granted('ROLE_ADMIN') %}
-                                <li><a href="{{ path('vereinUebersicht') }}">Verein</a></li>
-                                <li><a href="{{ path('mannschaftUebersicht') }}">Mannschaft</a></li>
-                                {% endif %}
-                                <li><a href="#">Schiedsrichter</a></li>
+                                <li><a href="{{ path('vereinList') }}">Verein</a></li>
+                                <li><a href="{{ path('mannschaftList') }}">Mannschaft</a></li>
+                                <li><a href="{{ path('schiedsrichterList') }}">Schiedsrichter</a></li>
                             </ul>
                         </li>
-                        {% endif %}
 
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
                                aria-expanded="false">Spielplan<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">Spielplanübersicht</a></li>
-                                {% if is_granted('ROLE_ADMIN') %}
                                 <li><a href="#">Spielplanerstellung</a></li>
-                                {% endif %}
-                                {% if is_granted('ROLE_ERGEBNIS_ERFASSUNG') %}
                                 <li><a href="#">Ergebniserfassung</a></li>
-                                {% endif %}
-                                {% if is_granted('ROLE_SR_ERFASSUNG') %}
                                 <li><a href="#">Schiedsrichtereinteilung</a></li>
-                                {% endif %}
-                                {% if is_granted('ROLE_ADMIN') %}
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"> <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Drucken</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"> <span class="glyphicon glyphicon-education" aria-hidden="true"></span> Urkunden</a></li>
-                                {% endif %}
                             </ul>
                         </li>
                         <li><a href="/">Live-Screen</a></li>
-                        {% endif %}
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right" >
@@ -88,7 +82,7 @@
                                 <li><a href="#"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>   Einstellungen </a></li>
                                 <li><a href="#">  <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>   Hilfe </a></li>
                                 <li role="separator" class="divider"></li>
-                                <li><a href="{{ path('logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>   Abmelden </a></li>
+                                <li><a href="{{ path('fos_user_security_logout') }}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>   Abmelden </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -98,6 +92,5 @@
     </div>
 
     {% block sidecontent %}{% endblock %}
-
 </body>
 </html>

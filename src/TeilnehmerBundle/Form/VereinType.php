@@ -22,28 +22,27 @@ class VereinType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('save', SubmitType::class, array(
-                'label' => ' Speichern',
-                'button_image' => 'check',
-                'button_color' => 'rgba(13, 135, 13, 1)',
-                'attr' => array(
-                    'class' => 'btn btn-lg btn-sm btn-default',
-                    'style' => 'color: rgba(13, 135, 13, 1);')
-            ))
-            ->add('saveAndClose', SubmitType::class, array(
-                'label' => ' Speichern & Schließen',
-                'button_image' => 'ok',
-                'button_color' => 'rgba(66, 66, 66, 1)',
-                'attr' => array(
-                    'class' => 'btn btn-lg btn-sm btn-default',
-                    'style' => 'color: rgba(66, 66, 66, 1);')
-            ))
-        ;
+        'label' => ' Speichern',
+        'button_image' => 'check',
+        'button_color' => 'rgba(13, 135, 13, 1)',
+        'attr' => array(
+            'class' => 'btn btn-lg btn-sm btn-default',
+            'style' => 'color: rgba(13, 135, 13, 1);')
+    ))
+        ->add('sichernUndSchliessen', SubmitType::class, array(
+            'label' => ' Speichern & Schließen',
+            'button_image' => 'ok',
+            'button_color' => 'rgba(66, 66, 66, 1)',
+            'attr' => array(
+                'class' => 'btn btn-lg btn-sm btn-default',
+                'style' => 'color: rgba(66, 66, 66, 1);')
+        ));
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'TeilnehmerBundle\Entity\Verein',
+            'data_class' => 'TeilnehmerBundle\Entity\Verein'
         ));
     }
 }

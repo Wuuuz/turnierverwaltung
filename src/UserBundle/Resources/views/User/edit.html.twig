@@ -1,0 +1,68 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block title %}Benutzer{% endblock %}
+
+{% block heading %}Benutzer editieren{% endblock %}
+
+{% block leftMenu %}
+    <li>
+        <a href="{{ path('benutzerList') }}"><p class="fa fa-Verein fa-fw">Benutzer</p> </a>
+    </li>
+    <li>
+        <a href="{{ path('fos_user_group_list') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Benutzergruppen</p> </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% form_theme form '@App/Form/fields.html.twig' %}
+
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+    <div class="row">
+        <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
+            <!-- butttons -->
+            {{ form_widget(form.save) }}
+
+            {{ form_widget(form.sichernUndSchliessen) }}
+
+            <a href="{{ path('benutzerList') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
+        </div>
+    </div>
+    {% if errors is defined %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in errors %}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <strong>{{ error.message }}</strong>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <div class="form-group">
+        <label for="inputName" class="col-md-2 control-label">Name:</label>
+        <div class="col-md-2">
+            {{ form_widget(form.name) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputName" class="col-md-2 control-label">Benutzername:</label>
+        <div class="col-md-2">
+            {{ form_widget(form.username) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputName" class="col-md-2 control-label">Email:</label>
+        <div class="col-md-2">
+            {{ form_widget(form.email) }}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label">Benutzergruppen:</label>
+        <div class="col-md-5">
+            {{ form_widget(form.groups) }}
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

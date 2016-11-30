@@ -4,6 +4,7 @@ imports:
     - { resource: services.yml }
     - { resource: "@TurnierplanBundle/Resources/config/services.yml" }
     - { resource: "@TeilnehmerBundle/Resources/config/services.yml" }
+    - { resource: "@UserBundle/Resources/config/services.yml" }
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # http://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
@@ -75,3 +76,13 @@ assetic:
     use_controller: '%kernel.debug%'
     filters:
         cssrewrite: ~
+
+fos_user:
+    db_driver: orm # other valid values are 'mongodb' and 'couchdb'
+    firewall_name: main
+    user_class: UserBundle\Entity\User
+    group:
+      form:
+        type: UserBundle\Form\GroupFormType
+      group_class: UserBundle\Entity\Group
+
