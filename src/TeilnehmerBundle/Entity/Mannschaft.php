@@ -50,6 +50,13 @@ class Mannschaft
     private $anzSr;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="anzPersonen", type="smallint")
+     */
+    private $anzPersonen;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="ankunft", type="datetime")
@@ -64,6 +71,27 @@ class Mannschaft
     private $starke;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="herkunft", type="smallint")
+     */
+    private $herkunft;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="liga", type="smallint")
+     */
+    private $liga;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="ligaplatz", type="smallint")
+     */
+    private $ligaplatz;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="mvName", type="string", length=255)
@@ -73,9 +101,9 @@ class Mannschaft
     /**
      * @var string
      *
-     * @ORM\Column(name="mvVorname", type="string", length=255)
+     * @ORM\Column(name="$mvStrasse", type="string", length=255)
      */
-    private $mvVorname;
+    private $mvStrasse;
 
     /**
      * @var string
@@ -316,30 +344,6 @@ class Mannschaft
     }
 
     /**
-     * Set mvVorname
-     *
-     * @param string $mvVorname
-     *
-     * @return Mannschaft
-     */
-    public function setMvVorname($mvVorname)
-    {
-        $this->mvVorname = $mvVorname;
-
-        return $this;
-    }
-
-    /**
-     * Get mvVorname
-     *
-     * @return string
-     */
-    public function getMvVorname()
-    {
-        return $this->mvVorname;
-    }
-
-    /**
      * Set mvPLZ
      *
      * @param string $mvPLZ
@@ -553,5 +557,125 @@ class Mannschaft
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * Set anzPersonen
+     *
+     * @param integer $anzPersonen
+     *
+     * @return Mannschaft
+     */
+    public function setAnzPersonen($anzPersonen)
+    {
+        $this->anzPersonen = $anzPersonen;
+
+        return $this;
+    }
+
+    /**
+     * Get anzPersonen
+     *
+     * @return integer
+     */
+    public function getAnzPersonen()
+    {
+        return $this->anzPersonen;
+    }
+
+    /**
+     * Set mvStrasse
+     *
+     * @param string $mvStrasse
+     *
+     * @return Mannschaft
+     */
+    public function setMvStrasse($mvStrasse)
+    {
+        $this->mvStrasse = $mvStrasse;
+
+        return $this;
+    }
+
+    /**
+     * Get mvStrasse
+     *
+     * @return string
+     */
+    public function getMvStrasse()
+    {
+        return $this->mvStrasse;
+    }
+
+    /**
+     * Set liga
+     *
+     * @param integer $liga
+     *
+     * @return Mannschaft
+     */
+    public function setLiga($liga)
+    {
+        $this->liga = $liga;
+
+        return $this;
+    }
+
+    /**
+     * Get liga
+     *
+     * @return integer
+     */
+    public function getLiga()
+    {
+        return $this->liga;
+    }
+
+    /**
+     * Set ligaplatz
+     *
+     * @param integer $ligaplatz
+     *
+     * @return Mannschaft
+     */
+    public function setLigaplatz($ligaplatz)
+    {
+        $this->ligaplatz = $ligaplatz;
+
+        return $this;
+    }
+
+    /**
+     * Get ligaplatz
+     *
+     * @return integer
+     */
+    public function getLigaplatz()
+    {
+        return $this->ligaplatz;
+    }
+
+    /**
+     * Set herkunft
+     *
+     * @param integer $herkunft
+     *
+     * @return Mannschaft
+     */
+    public function setHerkunft($herkunft)
+    {
+        $this->herkunft = $herkunft;
+
+        return $this;
+    }
+
+    /**
+     * Get herkunft
+     *
+     * @return integer
+     */
+    public function getHerkunft()
+    {
+        return $this->herkunft;
     }
 }

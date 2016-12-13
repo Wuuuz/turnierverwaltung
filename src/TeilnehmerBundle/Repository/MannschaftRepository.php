@@ -1,6 +1,7 @@
 <?php
 
 namespace TeilnehmerBundle\Repository;
+use TurnierplanBundle\TurnierplanBundle;
 
 /**
  * MannschaftRepository
@@ -10,4 +11,19 @@ namespace TeilnehmerBundle\Repository;
  */
 class MannschaftRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findMannschaftByStatusCompare($status,$altersklasse)
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $q  = $qb->select(array('p'))
+            ->from('TeilnehmerBundle:Mannschaft', 'p')
+            ->where(
+                $qb->expr()->gte('p.status', $status),
+                $qb->expr()->eq('p.altersklasse', $altersklasse->getId())
+            )
+            ->getQuery();
+
+        return $q->getResult();
+    }
 }

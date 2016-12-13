@@ -62,5 +62,10 @@ class Unterkunft
     {
         return $this->bezeichnung;
     }
+
+    public function __toString()
+    {
+        return $this->bezeichnung;
+    }
 }
 

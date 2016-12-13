@@ -1,0 +1,33 @@
+{% extends '@App/base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets 'bundles/app/css/05_startseite.custom.css' filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block title %}Interner Fehler{% endblock %}
+
+{% block sidecontent %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 error-container">
+                <div class="login-panel panel panel-default panel-default-error">
+                    <div class="panel-heading-error">
+                        <div class="panel-title-error"><strong>Fehler 500</strong></div>
+                    </div>
+                    <div class="panel-body panel-error-text">
+                        <form role="form">
+                            <fieldset>
+                                <p>Ein interer Serverfehler ist aufgetreten!</p>
+                                <p>Falls dies irrtümlich geschehen ist, kontaktieren Sie Ihren Turnierleiter!</p>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

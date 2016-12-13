@@ -1,0 +1,199 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets
+        'bundles/teilnehmer/css/07_bootstrap-select.min.css'
+        'bundles/teilnehmer/css/08_bootstrap-datetimepicker.css'
+        'bundles/teilnehmer/css/09_anmeldung.custom.css'
+        'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
+        'bundles/teilnehmer/css/11_jquery.dataTables.min.css'
+        'bundles/turnierplan/css/12_gruppen_einteilen.custom.css'
+    filter='cssrewrite' output='css/compiled/app.css'%}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+    {% block javascripts %}
+        {{ parent() }}
+
+        {% javascripts
+            'bundles/teilnehmer/js/10_query.dataTables.min.js'
+            'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
+            'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
+            'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+            'bundles/turnierplan/js/14_jquery.ui.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
+
+{% block title %}Turnierplanerstellung{% endblock %}
+
+{% block heading %}Schritt 2 von 4 - Gruppen überprüfen{% endblock %}
+
+{% block leftMenu %}
+    <li>
+        <a href=""><p class="fa fa-fw">Spielplanübersicht</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa  fa-fw">Spielplanerstellung</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Ergebniseingabe</p></a>
+    </li>
+    <li>
+        <a href=""><p class="fa  fa-fw">Schiedsrichtereint.</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Drucken</p></a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Urkunden</p></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <form class="form-horizontal" method="post">
+
+    <div class="row">
+        <div class="col-lg-12" style="min-height: 50px; margin-top:10px; ">
+            <button href="" class="btn btn-default btn-lg btn-sm" type="submit">
+                <span class="glyphicon glyphicon-th-large" aria-hidden="true" style=""></span><b>Spiele verteilen</b></button>
+
+            <a href="{{ path('spAnmeldungList') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
+        </div>
+    </div>
+    {% for aKlasse in altersklassen %}
+        {% if aKlasse.mannschaftenG1 %}
+            <div class="input-group-btn-vertical">
+                <button class="btn btn-default center-block" type="button" data-toggle="collapse" data-target="#altersklasse_{{ aKlasse.Altersklasse.Id }}"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                <p class="jugend">{{ aKlasse.Altersklasse.BezeichnungLang }}</p>
+            </div>
+            <div class="form-group">
+                <div align="center">
+                    <div id="altersklasse_{{ aKlasse.Altersklasse.Id }}" class="collapse panel panel-default altersklasse_group">
+                        <div class="panel-body panel-body-gruppeneinteilen">
+                            <div id="panelGroup">
+                                <div id="{{ aKlasse.Altersklasse.Id }}_1" class="panel panel-default panel-left-gruppeneinteilen">
+                                    <div class ="panel-heading text-center">
+                                        Gruppe 1
+                                    </div>
+                                    <div class="panel-body panel-body-gruppeneinteilen">
+                                        <div align="center">
+                                            <ul class="connectedSortable sortableLeft">
+                                                {% for mannschaft in aKlasse.mannschaftenG1 %}
+                                                    <div class="panel panel-default panel-default-gruppeneinteilen">
+                                                        <li class="panel-body panel-body-gruppeneinteilen" id="{{ mannschaft.Id }}">{{ mannschaft.Name }}</li>
+                                                    </div>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if aKlasse.mannschaftenG2 %}
+                                <div id="{{ aKlasse.Altersklasse.Id }}_2" class="panel panel-default panel-right-gruppeneinteilen">
+                                    <div class ="panel-heading text-center">
+                                        Gruppe 2
+                                    </div>
+                                    <div class="panel-body panel-body-gruppeneinteilen">
+                                        <div align="center">
+                                            <ul class="connectedSortable sortableRight">
+                                                {% for mannschaft in aKlasse.mannschaftenG2 %}
+                                                    <div class="panel panel-default panel-default-gruppeneinteilen">
+                                                        <li class="panel-body panel-body-gruppeneinteilen" id="{{ mannschaft.Id }}">{{ mannschaft.Name }}</li>
+                                                    </div>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if aKlasse.mannschaftenG1 %}
+                            <div class="col-md-12">
+                                <div class="labelsleft" >
+
+                                    <div class="form-group">
+                                        <label for="countFields1" class="col-md-1 control-label label_durchlauf">Durchläufe</label>
+                                        <div class="input-group spinner col-md-4">
+                                            <input type="text" class="form-control countFieldsLeft" value="1" min="1">
+                                            </input>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="PlatzierungSelect1" class="col-md-1 control-label label_platzierung">Platzierung</label>
+
+                                        <select class="selectpicker" title="Platzierung" id="PlatzierungSelect1" required>
+                                            <optgroup>
+                                                <option>Kreuzspiele</option>
+                                                <option>1-1,2-2</option>
+                                                <option>1-4,2-3</option>
+                                                <option>keine</option>
+                                            </optgroup>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                {% if aKlasse.mannschaftenG2 %}
+                                <div class="labelsright">
+                                    <div class="form-group">
+                                        <label for="countFields2" class="col-md-1 control-label label_durchlauf">Durchläufe</label>
+                                        <div class="input-group spinner col-md-4 durchlauf_Anzahl">
+                                            <input type="text" class="form-control countFieldsRight" value="1" min="1">
+                                            </input>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+        </form>
+    <script>
+        $(document).ready(function() {
+            $( ".sortableLeft, .sortableRight" ).sortable({
+                connectWith: ['.connectedSortable'],
+                stop: function(i) {
+                    var x = i.originalEvent.target;
+                    var panelId = $(x).attr('id');
+                    var groupName = x.parentNode.parentNode.parentNode.parentNode.parentNode;
+                    var groupNameId = $(groupName).attr('id');
+                    $.ajax({
+                        type: "POST",
+                        url: "/turnierplan/erstellung/2/aendern/"+panelId+"/"+groupNameId
+                    });
+                }
+            });
+            $( ".sortableLeft, .sortableRight" ).disableSelection();
+
+            $('.spinner .btn:first-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('max') == undefined || parseInt(input.val()) < parseInt(input.attr('max'))) {
+                    input.val(parseInt(input.val(), 10) + 1);
+                } else {
+                    btn.next("disabled", true);
+                }
+            });
+            $('.spinner .btn:last-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('min') == undefined || parseInt(input.val()) > parseInt(input.attr('min'))) {
+                    input.val(parseInt(input.val(), 10) - 1);
+                } else {
+                    btn.prev("disabled", true);
+                }
+            });
+        });
+    </script>
+{% endblock %}

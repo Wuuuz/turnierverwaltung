@@ -2,6 +2,26 @@
 
 {% block stylesheets %}
     {{ parent() }}
+
+    {% stylesheets
+    'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
+    'bundles/teilnehmer/css/06_datatable.custom.css'
+    filter='cssrewrite' output='css/compiled/app.css'%}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+    'bundles/teilnehmer/js/10_query.dataTables.min.js'
+    'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
+    'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
+    'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 {% endblock %}
 
 {% block title %}Mannschaft{% endblock %}
@@ -9,31 +29,139 @@
 {% block heading %}Mannschaftsübersicht{% endblock %}
 
 {% block leftMenu %}
+    {% if (is_granted('ROLE_VEREIN_VIEW')) %}
     <li>
         <a href="{{ path('vereinList') }}"><p class="fa fa-Verein fa-fw">Verein</p> </a>
     </li>
+        {% endif %}
+    {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
     <li>
         <a href="{{ path('mannschaftList') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Mannschaft</p> </a>
     </li>
+    {% endif %}
+    {% if (is_granted('ROLE_SR_VIEW')) %}
     <li>
         <a href="{{ path('schiedsrichterList') }}"><p class="fa fa-bar-Schiedsrichter-o fa-fw">Schiedsrichter</p></a>
-
     </li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
+<form method="post" action="{{ path('mannschaftDelete') }}">
     <div class="row">
         <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
             <!-- butttons -->
-
-            <a href="{{ path('fos_user_group_new') }}"class="btn btn-default btn-lg btn-sm" style="color: rgba(13, 135, 13, 1);" type="button">
+            {% if (is_granted('ROLE_MANNSCHAFT_CREATE')) %}
+            <a href="{{ path('mannschaftNew') }}"class="btn btn-default btn-lg btn-sm" style="color: rgba(13, 135, 13, 1);" type="button">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true" style="color:rgba(13, 135, 13, 1);"></span><b> Neu</b></a>
+            {% endif %}
 
-            <button class="btn btn-default btn-lg btn-sm" style="color: rgba(19, 84, 174, 1);" type="button">
+            {% if (is_granted('ROLE_MANNSCHAFT_VIEW') and is_granted('ROLE_MANNSCHAFT_EDIT')) %}
+            <button class="btn btn-default btn-lg btn-sm" style="color: rgba(19, 84, 174, 1);" type="button" id="edit">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true" style="color:  rgba(19, 84, 174, 1);"></span><b> Bearbeiten</b></button>
 
-            <button class="btn btn-default btn-lg btn-sm" style="color: rgba(66, 66, 66, 1);" type="button">
+            {% endif %}
+
+            {% if (is_granted('ROLE_MANNSCHAFT_DELETE')) %}
+            <button class="btn btn-default btn-lg btn-sm" style="color: rgba(66, 66, 66, 1);" type="submit">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true" style="color: rgba(66, 66, 66, 1); "></span><b> Löschen</b></button>
+            {% endif %}
         </div>
     </div>
+    {% for flash_message in app.session.flashBag.get('info') %}
+        <div class="alert alert-info">
+            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <strong>{{ flash_message }}</strong>
+        </div>
+    {% endfor %}
+    <table class="table table-striped display select " cellspacing="0" width="100%" id="tabelleMannschaften">
+        <thead>
+        <tr>
+            <th class="Checkbox"><input type="checkbox" name="select_all" value="1" id="example_select_all"></th>
+            <th>Mannschaftsname</th>
+            <th>Vereinszugehörigkeit</th>
+            <th>Jugend</th>
+        </tr>
+        </thead>
+
+
+        <tbody>
+        {% for mannschaft in mannschaften %}
+            <tr id="mannschaft_{{ mannschaft.Id }}">
+                <td class="Checkbox"><input type="checkbox" name="select_all[]" value="{{ mannschaft.Id }}" id="{{ mannschaft.Id }}"></td>
+                <td>{{ mannschaft.Name }}</td>
+                <td>{{ mannschaft.Verein.Name }}</td>
+                <td>{{ mannschaft.Altersklasse.BezeichnungLang }}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    </form>
+    <script>
+        var table = $('#tabelleMannschaften').DataTable({
+            responsive: true,
+            'columnDefs': [{
+                'targets': 0,
+                'searchable':false,
+                'orderable':false,
+            }],
+            'order': [1, 'dsc']
+        });
+
+
+        // Handle click on "Select all" control
+        $('#example_select_all').on('click', function(){
+            // Get all rows with search applied
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            // Check/uncheck checkboxes for all rows in the table
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
+        });
+
+        // Handle click on checkbox to set state of "Select all" control
+        $('#tableSchiedsrichter tbody').on('change', 'input[type="checkbox"]', function(){
+            // If checkbox is not checked
+            if(!this.checked){
+                var el = $('#example_select_all').get(0);
+                // If "Select all" control is checked and has 'indeterminate' property
+                if(el && el.checked && ('indeterminate' in el)){
+                    // Set visual state of "Select all" control
+                    // as 'indeterminate'
+                    el.indeterminate = true;
+                }
+            }
+        });
+
+        // Handle form submission event
+        $('#frm-example').on('submit', function(e){
+            var form = this;
+
+            // Iterate over all checkboxes in the table
+            table.$('input[type="checkbox"]').each(function(){
+                // If checkbox doesn't exist in DOM
+                if(!$.contains(document, this)){
+                    // If checkbox is checked
+                    if(this.checked){
+                        // Create a hidden element
+                        $(form).append(
+                                $('<input>')
+                                        .attr('type', 'hidden')
+                                        .attr('name', this.name)
+                                        .val(this.value)
+                        );
+                    }
+                }
+            });
+        });
+
+        $('#edit').on('click', function(){
+
+            var checkboxes = table.$("input[type='checkbox']:checked");
+            var checkboxId = $(checkboxes).attr('id');
+
+            if(checkboxes.length != 0){
+                window.location = "/mannschaft/"+checkboxId+"/edit";
+            }
+
+        });
+    </script>
 {% endblock %}

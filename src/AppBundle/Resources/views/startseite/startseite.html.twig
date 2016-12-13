@@ -13,58 +13,59 @@
 {% block sidecontent %}
         <div align="center">
             {% if (is_granted('ROLE_USER_VIEW') or is_granted('ROLE_GROUP_VIEW'))  %}
-            <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 container_startseite">
                 <div class="thumbnail">
-                    {% image '@AppBundle/Resources/public/images/benutzer.jpg' %}
-                    <img src="{{ asset_url }}" alt="Benutzer" class="startseite"/>
+                    {% image 'bundles/app/images/benutzer.jpg' %}
+                    <img src="{{ asset_url }}" alt="Benutzer" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="{{ path('benutzerList') }}" class="btn btn-default" role="button">Benutzer</a></p>
+                        <p><a href="{{ path('benutzerList') }}" class="btn btn-default button_startseite" role="button">Benutzer</a></p>
                     </div>
                 </div>
             </div>
             {% endif %}
 
-            <div class="col-sm-6 col-md-4">
+            {% if (is_granted('ROLE_VEREIN_VIEW') or is_granted('ROLE_MANNSCHAFT_VIEW') or is_granted('ROLE_SR_VIEW'))  %}
+            <div class="col-sm-6 col-md-4 container_startseite">
                 <div class="thumbnail">
-                    {% image '@AppBundle/Resources/public/images/teilnehmer.jpg' %}
-                    <img src="{{ asset_url }}" alt="Teilnehmer" class="startseite"/>
+                    {% image 'bundles/app/images/teilnehmer.jpg' %}
+                    <img src="{{ asset_url }}" alt="Teilnehmer" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="{{ path('mannschaftList') }}" class="btn btn-default" role="button">Teilnehmer</a></p>
+                        <p><a href="{{ path('mannschaftList') }}" class="btn btn-default button_startseite" role="button">Teilnehmer</a></p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="col-sm-6 col-md-4 container_startseite">
+                <div class="thumbnail">
+                    {% image 'bundles/app/images/spielplan.jpg' %}
+                    <img src="{{ asset_url }}" alt="Spielplan" class="startseite bild_startseite"/>
+                    {% endimage %}
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default button_startseite" role="button">Spielplan</a></p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 container_startseite">
                 <div class="thumbnail">
-                    {% image '@AppBundle/Resources/public/images/spielplan.jpg' %}
-                    <img src="{{ asset_url }}" alt="Spielplan" class="startseite"/>
+                    {% image 'bundles/app/images/turnier.jpg' %}
+                    <img src="{{ asset_url }}" alt="Turnier" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default" role="button">Spielplan</a></p>
+                        <p><a href="#" class="btn btn-default button_startseite" role="button">Turnier</a></p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4 container_startseite">
                 <div class="thumbnail">
-                    {% image '@AppBundle/Resources/public/images/turnier.jpg' %}
-                    <img src="{{ asset_url }}" alt="Turnier" class="startseite"/>
+                    {% image 'bundles/app/images/live_screen.jpg' %}
+                    <img src="{{ asset_url }}" alt="Livescreen" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default" role="button">Turnier</a></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-md-4">
-                <div class="thumbnail">
-                    {% image '@AppBundle/Resources/public/images/live_screen.jpg' %}
-                    <img src="{{ asset_url }}" alt="Livescreen" class="startseite"/>
-                    {% endimage %}
-                    <div class="caption">
-                        <p><a href="#" class="btn btn-default" role="button">Livescreen</a></p>
+                        <p><a href="#" class="btn btn-default button_startseite" role="button">Livescreen</a></p>
                     </div>
                 </div>
             </div>

@@ -13,6 +13,12 @@
         {% endstylesheets %}
     {% endblock %}
 
+    <style>
+        body{
+            background-image: url(' {{ asset('bundles/user/images/background.jpg') }}');
+        }
+    </style>
+
 
     {% javascripts
     'bundles/base/js/*'
@@ -20,12 +26,12 @@
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
 </head>
-<body>
+<body class="login">
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="login-panel panel panel-default">
-                <div class="panel-heading">
+                <div class="panel-heading heading-login">
                     <h3 class="panel-title">Turnierverwaltung</h3>
                 </div>
                 <div class="panel-body">

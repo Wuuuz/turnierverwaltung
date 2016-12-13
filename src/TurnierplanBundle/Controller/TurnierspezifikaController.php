@@ -16,6 +16,14 @@ use TeilnehmerBundle\Utils\AltersklasseAnmeldungWrapper;
 use TeilnehmerBundle\Utils\AnmeldungAltersklasseWrapper;
 use TeilnehmerBundle\Utils\AnmeldungMannschaftWrapper;
 
-class TurnierplanerstellungController extends Controller
+class TurnierspezifikaController extends Controller
 {
+    /**
+     * @Route("/turnierplan/erstellung/3", name="spTurnierspezifika")
+     */
+    public function listAction()
+    {
+
+        return $this->render('TurnierplanBundle:AnmeldungUebersicht:list.html.twig');
+    }
 }

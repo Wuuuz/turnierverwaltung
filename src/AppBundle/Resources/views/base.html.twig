@@ -8,16 +8,18 @@
         {% stylesheets
             'bundles/base/css/*'
             'bundles/app/css/04_base.custom.css'
-        filter='cssrewrite' output='css/compiled/app.css'%}
+                    filter='cssrewrite' %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
 
-    {% javascripts
-        'bundles/base/js/*'
-            output='js/compiled/app.js' %}
-            <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+    {% block javascripts %}
+        {% javascripts
+            'bundles/base/js/*'
+        %}
+                <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
 </head>
 
 <body>
@@ -44,24 +46,43 @@
                         {% if is_granted('ROLE_ADMIN') %}
                         <li><a href="#">Turnier</a></li>
                         {% endif %}
+
                         {% if (is_granted('ROLE_USER_VIEW') or is_granted('ROLE_GROUP_VIEW'))  %}
-                        <li><a href="{{ path('fos_user_group_list') }}">Benutzer</a></li>
-                        {% endif %}
                         <li class="dropdown">
-                            <a href="#" class=" dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teilnehmer<span class="caret"></span></a>
+                            <a href="#" class=" dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Benutzer<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{{ path('vereinList') }}">Verein</a></li>
-                                <li><a href="{{ path('mannschaftList') }}">Mannschaft</a></li>
-                                <li><a href="{{ path('schiedsrichterList') }}">Schiedsrichter</a></li>
+                                {% if (is_granted('ROLE_USER_VIEW')) %}
+                                <li><a href="{{ path('benutzerList') }}">Benutzer</a></li>
+                                {% endif %}
+                                {% if (is_granted('ROLE_GROUP_VIEW')) %}
+                                <li><a href="{{ path('fos_user_group_list') }}">Benutzergruppen</a></li>
+                                {% endif %}
                             </ul>
+                        </li>
+                        {% endif %}
+                        {% if (is_granted('ROLE_VEREIN_VIEW') or is_granted('ROLE_MANNSCHAFT_VIEW') or is_granted('ROLE_SR_VIEW'))  %}
+                        <li class="dropdown">
+                            <a href="#" class=" dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Teilnehmer<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                {% if (is_granted('ROLE_VEREIN_VIEW')) %}
+                                <li><a href="{{ path('vereinList') }}">Verein</a></li>
+                                {% endif %}
+                                {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
+                                <li><a href="{{ path('mannschaftList') }}">Mannschaft</a></li>
+                                {% endif %}
+                                {% if (is_granted('ROLE_SR_VIEW')) %}
+                                <li><a href="{{ path('schiedsrichterList') }}">Schiedsrichter</a></li>
+                                {% endif %}
+                            </ul>
+                            {% endif %}
                         </li>
 
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
+                            <a href="#" class="dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true"
                                aria-expanded="false">Spielplan<span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">Spielplanübersicht</a></li>
-                                <li><a href="#">Spielplanerstellung</a></li>
+                                <li><a href="{{ path('spAnmeldungList') }}">Spielplanerstellung</a></li>
                                 <li><a href="#">Ergebniserfassung</a></li>
                                 <li><a href="#">Schiedsrichtereinteilung</a></li>
                                 <li role="separator" class="divider"></li>
@@ -75,7 +96,7 @@
 
                     <ul class="nav navbar-nav navbar-right" >
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>   {{ app.user.username }}   <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" style="width:100%;">

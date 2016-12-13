@@ -29,13 +29,6 @@ class Schiedsrichter
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="vorname", type="string", length=255)
-     */
-    private $vorname;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Verein")
      * @ORM\JoinColumn(name="verein_id", referencedColumnName="id")
      */
@@ -73,30 +66,6 @@ class Schiedsrichter
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set vorname
-     *
-     * @param string $vorname
-     *
-     * @return Schiedsrichter
-     */
-    public function setVorname($vorname)
-    {
-        $this->vorname = $vorname;
-
-        return $this;
-    }
-
-    /**
-     * Get vorname
-     *
-     * @return string
-     */
-    public function getVorname()
-    {
-        return $this->vorname;
     }
 
     /**

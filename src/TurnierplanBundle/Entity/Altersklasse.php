@@ -29,6 +29,13 @@ class Altersklasse
     private $bezeichnung;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="bezeichnungLang", type="string", length=255)
+     */
+    private $bezeichnungLang;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="spielmodus", type="smallint",nullable=true)
@@ -41,6 +48,13 @@ class Altersklasse
      * @ORM\Column(name="geschlecht", type="smallint")
      */
     private $geschlecht;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="alter", type="smallint")
+     */
+    private $alter;
 
 
     /**
@@ -123,5 +137,58 @@ class Altersklasse
     public function getGeschlecht()
     {
         return $this->geschlecht;
+    }
+
+    public function __toString()
+    {
+        return $this->bezeichnung;
+    }
+
+    /**
+     * Set bezeichnungLang
+     *
+     * @param string $bezeichnungLang
+     *
+     * @return Altersklasse
+     */
+    public function setBezeichnungLang($bezeichnungLang)
+    {
+        $this->bezeichnungLang = $bezeichnungLang;
+
+        return $this;
+    }
+
+    /**
+     * Get bezeichnungLang
+     *
+     * @return string
+     */
+    public function getBezeichnungLang()
+    {
+        return $this->bezeichnungLang;
+    }
+
+    /**
+     * Set alter
+     *
+     * @param integer $alter
+     *
+     * @return Altersklasse
+     */
+    public function setAlter($alter)
+    {
+        $this->alter = $alter;
+
+        return $this;
+    }
+
+    /**
+     * Get alter
+     *
+     * @return integer
+     */
+    public function getAlter()
+    {
+        return $this->alter;
     }
 }

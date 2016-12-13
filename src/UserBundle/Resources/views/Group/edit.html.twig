@@ -9,12 +9,16 @@
 {% block heading %}Gruppe bearbeiten{% endblock %}
 
 {% block leftMenu %}
+    {% if (is_granted('ROLE_USER_VIEW')) %}
     <li>
         <a href="{{ path('benutzerList') }}"><p class="fa fa-Verein fa-fw">Benutzer</p> </a>
     </li>
+    {% endif %}
+    {% if (is_granted('ROLE_GROUP_VIEW')) %}
     <li>
         <a href="{{ path('fos_user_group_list') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Benutzergruppen</p> </a>
     </li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -28,7 +32,7 @@
 
                 {{ form_widget(form.sichernUndSchliessen) }}
 
-                <a href="{{ path('vereinUebersicht') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+                <a href="{{ path('fos_user_group_list') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
             </div>
         </div>
@@ -40,6 +44,11 @@
                 {% endfor %}
             </div>
         {% endif %}
+        {% for flash_message in app.session.flashBag.get('info') %}
+            <div class="alert alert-info">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <strong>{{ flash_message }}</strong>
+            </div>
+        {% endfor %}
         <div class="form-group">
             <label for="inputName" class="col-md-2 control-label">Gruppenname</label>
             <div class="col-md-2">

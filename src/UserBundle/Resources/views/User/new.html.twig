@@ -9,12 +9,16 @@
 {% block heading %}Benutzer anlegen{% endblock %}
 
 {% block leftMenu %}
-    <li>
-        <a href="{{ path('benutzerList') }}"><p class="fa fa-Verein fa-fw">Benutzer</p> </a>
-    </li>
-    <li>
-        <a href="{{ path('fos_user_group_list') }}"><p class="fa fa-bar-Gruppe-o fa-fw">Benutzergruppen</p> </a>
-    </li>
+    {% if (is_granted('ROLE_USER_VIEW')) %}
+        <li>
+            <a href="{{ path('benutzerList') }}"><p class="fa fa-Verein fa-fw">Benutzer</p> </a>
+        </li>
+    {% endif %}
+    {% if (is_granted('ROLE_GROUP_VIEW')) %}
+        <li>
+            <a href="{{ path('fos_user_group_list') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Benutzergruppen</p> </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}

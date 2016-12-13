@@ -9,11 +9,11 @@
 namespace UserBundle\Controller;
 
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use FOS\UserBundle\Event\FilterGroupResponseEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseGroupEvent;
 use FOS\UserBundle\Event\GroupEvent;
-use FOS\UserBundle\Form\Factory\FactoryInterface;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Model\GroupInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,6 +25,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use FOS\UserBundle\Controller\RegistrationController as BaseController;
 use UserBundle\Entity\Group;
 use UserBundle\Form\GroupFormType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
  * RESTful controller managing group CRUD.
@@ -39,10 +41,12 @@ class GroupController extends BaseController
      */
     public function listAction()
     {
-        $groups = $this->get('fos_user.group_manager')->findGroups();
+        $this->denyAccessUnlessGranted('ROLE_GROUP_VIEW');
+
+        $gruppen = $this->get('fos_user.group_manager')->findGroups();
 
         return $this->render('FOSUserBundle:Group:list.html.twig', array(
-            'groups' => $groups,
+            'gruppen' => $gruppen,
         ));
     }
 
@@ -55,11 +59,8 @@ class GroupController extends BaseController
      */
     public function showAction($id)
     {
-        $group = $this->findGroupBy('id', $id);
 
-        return $this->render('FOSUserBundle:Group:show.html.twig', array(
-            'group' => $group,
-        ));
+        return $this->render('FOSUserBundle:Group:show.html.twig');
     }
 
     /**
@@ -72,6 +73,9 @@ class GroupController extends BaseController
      */
     public function editAction(Request $request, $id)
     {
+        $this->denyAccessUnlessGranted('ROLE_GROUP_VIEW');
+        $this->denyAccessUnlessGranted('ROLE_GROUP_EDIT');
+
         $roles = $this->getDoctrine()
         ->getRepository('UserBundle:Role')
         ->findAll();
@@ -105,6 +109,11 @@ class GroupController extends BaseController
 
             $groupManager->updateGroup($group);
 
+            $this->addFlash(
+                'info',
+                'Gruppe erfolgreich bearbeitet!'
+            );
+
             if (null === $response = $event->getResponse()) {
                 $url = $this->generateUrl('fos_user_group_edit', array('id' => $group->getId()));
                 $response = new RedirectResponse($url);
@@ -130,6 +139,8 @@ class GroupController extends BaseController
      */
     public function newAction(Request $request)
     {
+        $this->denyAccessUnlessGranted('ROLE_GROUP_CREATE');
+
         $roles = $this->getDoctrine()
             ->getRepository('UserBundle:Role')
             ->findAll();
@@ -148,7 +159,7 @@ class GroupController extends BaseController
 
         $dispatcher->dispatch(FOSUserEvents::GROUP_CREATE_INITIALIZE, new GroupEvent($group, $request));
 
-        $form = $this->createForm(GroupFormType::class,$group,array('roles' => $theRoles));
+        $form = $this->createForm(GroupFormType::class, $group, array('roles' => $theRoles));
 
         $form->setData($group);
 
@@ -160,10 +171,15 @@ class GroupController extends BaseController
 
             $groupManager->updateGroup($group);
 
+            $this->addFlash(
+                'info',
+                'Gruppe erfolgreich hinzugefügt!'
+            );
+
             if (null === $response = $event->getResponse()) {
-                if($form->get('sichernUndSchliessen')->isClicked())
+                if ($form->get('sichernUndSchliessen')->isClicked())
                     $url = $this->generateUrl('fos_user_group_list');
-                else if($form->get('save')->isClicked())
+                else if ($form->get('save')->isClicked())
                     $url = $this->generateUrl('fos_user_group_edit', array('id' => $group->getId()));
 
                 $response = new RedirectResponse($url);
@@ -181,25 +197,62 @@ class GroupController extends BaseController
     }
 
     /**
-     * Delete one group.
-     *
-     * @param Request $request
-     * @param string  $groupName
-     *
-     * @return RedirectResponse
+     * @Route("/gruppe/delete", name="gruppeDelete")
+     * @Method({"POST"})
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction()
     {
-        $group = $this->findGroupBy('id', $id);
-        $this->get('fos_user.group_manager')->deleteGroup($group);
+        if(!$this->isGranted('ROLE_GROUP_DELETE')){
+            $this->addFlash(
+                'danger',
+                'Sie besitzen keine Berechtigung, eine Gruppe zu löschen!'
+            );
+        }
+        else {
+            $request = Request::createFromGlobals();
 
-        $response = new RedirectResponse($this->generateUrl('fos_user_group_list'));
+            $gruppe_delete = $request->request->get('select_all');
 
-        /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
-        $dispatcher = $this->get('event_dispatcher');
-        $dispatcher->dispatch(FOSUserEvents::GROUP_DELETE_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+            foreach ($gruppe_delete as $id) {
+                $em = $this->getDoctrine()->getManager();
 
-        return $response;
+                try {
+                    $gruppe = $this->getDoctrine()
+                        ->getRepository('UserBundle:Group')
+                        ->findOneBy(array('id' => $id));
+                } catch (NotFoundHttpException $e) {
+                    $this->addFlash(
+                        'warning',
+                        'Gruppe mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Verein nicht vorhanden'
+                    );
+                }
+
+                try {
+                    $em->remove($gruppe);
+                    $em->flush();
+                    $this->addFlash(
+                        'info',
+                        'Gruppe mit ID ' . $id . ' erfolgreich gelöscht!'
+                    );
+                } catch (ForeignKeyConstraintViolationException $e) {
+                    $this->addFlash(
+                        'danger',
+                        'Gruppe mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
+                    );
+                } catch (Exception $e) {
+                    $this->addFlash(
+                        'danger',
+                        'Gruppe mit ID ' . $id . ' konnte nicht gelöscht werden!'
+                    );
+                }
+            }
+        }
+
+        $gruppen = $this->getDoctrine()
+            ->getRepository('UserBundle:Group')
+            ->findAll();
+
+        return $this->redirectToRoute('fos_user_group_list',array('gruppen' => $gruppen));
     }
 
     /**
