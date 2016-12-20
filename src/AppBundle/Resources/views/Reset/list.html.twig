@@ -1,0 +1,278 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets
+        'bundles/turnierplan/css/14_reset.custom.css'
+    filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block title %}Turnier{% endblock %}
+
+{% block heading %}Zurücksetzen{% endblock %}
+
+{% block leftMenu %}
+    {% if (is_granted('ROLE_TURNIER_VIEW')) %}
+        <li>
+            <a href="{{ path('turnierEdit') }}"><p class="fa fa-Verein fa-fw">Turnierinfos</p> </a>
+        </li>
+    {% endif %}
+    {% if (is_granted('ROLE_TURNIER_DELETE')) %}
+        <li>
+            <a href="{{ path('turnierReset') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Zurücksetzen</p> </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <form method="post" action="{{ path('turnierDelete') }}">
+        <div class="row">
+            <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
+
+                {% if (is_granted('ROLE_VEREIN_CREATE')) %}
+                    <button class="btn btn-default btn-lg btn-sm" style="color: rgba(19, 84, 174, 1);" type="submit">
+                        <span class="glyphicon glyphicon-repeat" aria-hidden="true" style="color:rgba(19, 84, 174, 1);"></span><b> Zurücksetzen</b></button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Turnier</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <input class="turnierinfo" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default1" autocomplete="off" value="1" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default1" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default1" class="[ btn btn-default active ]">
+                            Turnierinformation
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input class="gesamtes_turnier" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default2" autocomplete="off" value="2" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default2" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default2" class="[ btn btn-default active ]">
+                            Gesamtes Turnier
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Benutzer</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <input class="benutzer" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default3" autocomplete="off" value="3" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default3" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default3" class="[ btn btn-default active ]">
+                            Benutzer
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input class="bentuzer_grp" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default4" autocomplete="off" value="4" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default4" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default4" class="[ btn btn-default active ]">
+                            Benutzergruppen
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Teilnehmer</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <input class="mannschaft" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default5" autocomplete="off" value="5" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default5" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default5" class="[ btn btn-default active ]">
+                            Mannschaft
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input class="verein" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default6" autocomplete="off" value="6" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default6" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default6" class="[ btn btn-default active ]">
+                            Verein
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" checked>
+                    <input class="schiedsrichter" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default7" autocomplete="off" value="7" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default7" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default7" class="[ btn btn-default active ]">
+                            Schiedsrichter
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Spielplan</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <input class="spiele" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default8" autocomplete="off" value="8" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default8" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default8" class="[ btn btn-default active ]">
+                            Spiele
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <input class="spielergebniss" type="checkbox" name="turnierReset[]" id="fancy-checkbox-default9" autocomplete="off" value="9" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default9" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default9" class="[ btn btn-default active ]">
+                            Spielergebnisse
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" checked>
+                    <input class="schiedsrichtereinteilung"type="checkbox" name="turnierReset[]" id="fancy-checkbox-default10" autocomplete="off" value="10" />
+                    <div class="[ btn-group ]">
+                        <label for="fancy-checkbox-default10" class="[ btn btn-default ]">
+                            <span class="[ glyphicon glyphicon-ok ]"></span>
+                            <span> </span>
+                        </label>
+                        <label for="fancy-checkbox-default10" class="[ btn btn-default active ]">
+                            Schiedsrichtereinteilungen
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+
+        $('.gesamtes_turnier').click(function() {
+            if ($(this).is(':checked')) {
+                $('.turnierinfo').prop('checked', true);
+                $('.benutzer').prop('checked', true);
+                $('.bentuzer_grp').prop('checked', true);
+                $('.mannschaft').prop('checked', true);
+                $('.verein').prop('checked', true);
+                $('.schiedsrichter').prop('checked', true);
+                $('.spiele').prop('checked', true);
+                $('.spielergebniss').prop('checked', true);
+                $('.schiedsrichtereinteilung').prop('checked', true);
+
+            } else {
+                $('.turnierinfo').prop('checked', false);
+                $('.benutzer').prop('checked', false);
+                $('.bentuzer_grp').prop('checked', false);
+                $('.mannschaft').prop('checked', false);
+                $('.verein').prop('checked', false);
+                $('.schiedsrichter').prop('checked', false);
+                $('.spiele').prop('checked', false);
+                $('.spielergebniss').prop('checked', false);
+                $('.schiedsrichtereinteilung').prop('checked', false);
+
+            }
+        });
+
+        $('.verein').click(function() {
+            if ($(this).is(':checked')) {
+                $('.mannschaft').prop('checked', true);
+                $('.schiedsrichter').prop('checked', true);
+                $('.spiele').prop('checked', true);
+                $('.spielergebniss').prop('checked', true);
+                $('.schiedsrichtereinteilung').prop('checked', true);
+
+            } else {
+                $('.mannschaft').prop('checked', false);
+                $('.schiedsrichter').prop('checked', false);
+                $('.spiele').prop('checked', false);
+                $('.spielergebniss').prop('checked', false);
+                $('.schiedsrichtereinteilung').prop('checked', false);
+
+            }
+        });
+
+        $('.mannschaft').click(function() {
+            if ($(this).is(':checked')) {
+                $('.spiele').prop('checked', true);
+                $('.spielergebniss').prop('checked', true);
+                $('.schiedsrichtereinteilung').prop('checked', true);
+
+
+            } else {
+                $('.spiele').prop('checked', false);
+                $('.spielergebniss').prop('checked', false);
+                $('.schiedsrichtereinteilung').prop('checked', false);
+            }
+        });
+
+        $('.spiele').click(function() {
+            if ($(this).is(':checked')) {
+                $('.spielergebniss').prop('checked', true);
+                $('.schiedsrichtereinteilung').prop('checked', true);
+
+
+            } else {
+                $('.spielergebniss').prop('checked', false);
+                $('.schiedsrichtereinteilung').prop('checked', false);
+            }
+        });
+
+    </script>
+{% endblock %}

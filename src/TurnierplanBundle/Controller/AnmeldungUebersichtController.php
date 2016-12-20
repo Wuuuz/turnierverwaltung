@@ -63,7 +63,7 @@ class AnmeldungUebersichtController extends Controller
             array_push($alterklasseWrapperArray,$alterklasseWrapper);
 
         }
-        dump($alterklasseWrapperArray);
+
         return $this->render('TurnierplanBundle:AnmeldungUebersicht:list.html.twig', array(
             'altersklassen' => $alterklasseWrapperArray
         ));

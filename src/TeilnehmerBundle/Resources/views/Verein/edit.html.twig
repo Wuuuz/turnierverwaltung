@@ -49,14 +49,10 @@
             {% endfor %}
         </div>
     {% endif %}
-    {% for flash_message in app.session.flashBag.get('info') %}
-        <div class="alert alert-info">
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <strong>{{ flash_message }}</strong>
-        </div>
-    {% endfor %}
     <div class="form-group">
     <label for="inputName" class="col-md-2 control-label">Vereinsname</label>
     <div class="col-md-3">
         {{ form_widget(form.name) }}
     </div>
+    {{ form_end(form) }}
 {% endblock %}

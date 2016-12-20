@@ -26,9 +26,17 @@
                 {% block leftMenu %}{% endblock %}
             </ul>
         </div>
+        <div class="stoppuhr">
+            <h2><time>00:00</time></h2>
+            <div class="stoppuhr_button">
+                <button id="start" class="glyphicon glyphicon-play"></button>
+                <button id="stop" class="glyphicon glyphicon-stop"></button>
+                <button id="clear" class="glyphicon glyphicon-refresh"></button>
+            </div>
+        </div>
     </div>
 </div>
-    <div id="page-wrapper" style="min-height: 288px; ">
+    <div id="page-wrapper" style="min-height: 288px; padding-top: 3px;">
         {% if app.session.flashBag.has('success') %}
             <div class="alert alert-success alert-dismissible fade in">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -67,4 +75,5 @@
 
         {% block content %}{% endblock %}
     </div>
+    <script src="{{ asset('bundles/app/js/06_clock.custom.js') }}"></script>
 {% endblock %}

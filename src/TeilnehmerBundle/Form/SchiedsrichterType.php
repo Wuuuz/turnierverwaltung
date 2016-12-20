@@ -9,6 +9,8 @@
 namespace TeilnehmerBundle\Form;
 
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -24,6 +26,10 @@ class SchiedsrichterType extends AbstractType
             ->add('name', TextType::class)
             ->add('verein', EntityType::class, array(
                 'class' => 'TeilnehmerBundle\Entity\Verein',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.status > 0');
+                },
             ))
             ->add('save', SubmitType::class, array(
                 'label' => ' Speichern',

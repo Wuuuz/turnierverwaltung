@@ -9,6 +9,7 @@
 
 namespace TeilnehmerBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -27,6 +28,10 @@ class MannschaftType extends AbstractType
             ->add('name', TextType::class)
             ->add('verein', EntityType::class, array(
                 'class' => 'TeilnehmerBundle\Entity\Verein',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                    ->where('u.status > 0');
+    },
             ))
             ->add('altersklasse', EntityType::class, array(
                 'class' => 'TurnierplanBundle\Entity\Altersklasse',
@@ -109,7 +114,6 @@ class MannschaftType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'TeilnehmerBundle\Entity\Mannschaft',
-            'csrf_protection' => false
         ));
     }
 }

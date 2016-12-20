@@ -3,7 +3,8 @@
 {% block stylesheets %}
     {{ parent() }}
 
-    {% stylesheets 'bundles/app/css/05_startseite.custom.css' filter='cssrewrite' %}
+    {% stylesheets 'bundles/app/css/05_startseite.custom.css'
+        filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 {% endblock %}
@@ -66,6 +67,17 @@
                     {% endimage %}
                     <div class="caption">
                         <p><a href="#" class="btn btn-default button_startseite" role="button">Livescreen</a></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-md-4 container_startseite">
+                <div class="thumbnail">
+                    {% image 'bundles/app/images/anmeldungen.jpg' %}
+                    <img src="{{ asset_url }}" alt="Anmeldungen" class="startseite bild_startseite"/>
+                    {% endimage %}
+                    <div class="caption">
+                        <p><a href="#" class="btn btn-default button_startseite" role="button">Anmeldungen</a></p>
                     </div>
                 </div>
             </div>

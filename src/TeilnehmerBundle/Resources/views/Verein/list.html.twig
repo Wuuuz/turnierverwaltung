@@ -6,7 +6,7 @@
     {% stylesheets
     'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
     'bundles/teilnehmer/css/06_datatable.custom.css'
-    filter='cssrewrite' output='css/compiled/app.css'%}
+    filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 {% endblock %}
@@ -67,11 +67,6 @@
             {% endif %}
         </div>
     </div>
-    {% for flash_message in app.session.flashBag.get('info') %}
-        <div class="alert alert-info">
-            <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <strong>{{ flash_message }}</strong>
-        </div>
-    {% endfor %}
     <table class="table table-striped display select " cellspacing="0" width="100%" id="tableVereine">
         <thead>
         <tr>

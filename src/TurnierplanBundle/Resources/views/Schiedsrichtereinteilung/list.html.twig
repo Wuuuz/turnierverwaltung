@@ -1,0 +1,176 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets
+        'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
+        'bundles/turnierplan/css/13_turnierplan.custom.css'
+        'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
+        'bundles/teilnehmer/css/07_bootstrap-select.min.css'
+    filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+    'bundles/teilnehmer/js/10_query.dataTables.min.js'
+    'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
+    'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
+    'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+        'bundles/base/js/08_bootstrap-select.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block title %}Turnierplan{% endblock %}
+
+{% block heading %}Schiedsrichtereinteilung{% endblock %}
+
+{% block leftMenu %}
+    <li>
+        <a href=""><p class="fa fa-fw">Spielplanübersicht</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa  fa-fw">Spielplanerstellung</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Ergebniseingabe</p></a>
+    </li>
+    <li>
+        <a href=""><p class="fa  fa-fw">Schiedsrichtereint.</p> </a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Drucken</p></a>
+    </li>
+    <li>
+        <a href=""><p class="fa fa-fw">Urkunden</p></a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <table class="table display" id="tabelle_benutzer" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+            <th>Datum/Uhrzeit</th>
+            <th>Feld</th>
+            <th>Jugend</th>
+            <th>Heimmannschaft</th>
+            <th>Gastmannschaft</th>
+            <th>Schiedsrichter 1</th>
+            <th>Schiedsrichter 2</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <th>Datum/Uhrzeit</th>
+            <th>Feld</th>
+            <th>Jugend</th>
+            <th>Heimmannschaft</th>
+            <th>Gastmannschaft</th>
+            <th>Schiedsrichter 1</th>
+            <th>Schiedsrichter 2</th>
+        </tr>
+        </tfoot>
+        <tbody>
+            {% for spiel in spiele %}
+                <tr id="{{ spiel.Id }}">
+                    <td>{{ spiel.Uhrzeit|date("d.m.Y H:i") }}</td>
+                    <td>{{ spiel.Spielfeld }}</td>
+                    <td>{{ spiel.Altersklasse.Bezeichnung }}</td>
+                    <td>{{ spiel.Mannschaft1.Name }}</td>
+                    <td>{{ spiel.Mannschaft2.Name }}</td>
+                    <td id="ColumnSchiedsrichter1">
+                        <select class="selectpicker" data-live-search="true" title="Schiedsrichter1" id="SelectOptions1">
+                            <optgroup label="verfügbare Schiedsrichter">
+                                {% for sr in schiedsrichter %}
+                                    <option data-subtext="{{ sr.Verein.Name }}" value="{{ sr.Id }}">{{ sr.Name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    </td>
+                    <td id="ColumnSchiedsrichter2">
+                        <select class="selectpicker" data-live-search="true" title="Schiedsrichter2" id="SelectOptions2">
+                            <optgroup label="verfügbare Schiedsrichter">
+                                {% for sr in schiedsrichter %}
+                                    <option data-subtext="{{ sr.Verein.Name }}" value="{{ sr.Id }}">{{ sr.Name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                        </select>
+                    </td>
+                </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+
+            // Setup - add a text input to each footer cell
+            $('#tabelle_benutzer tfoot th').each( function () {
+                var title = $(this).text();
+                $(this).html( '<input type="text" placeholder="'+ title +'" />' );
+            } );
+
+            var oTable = $('#tabelle_benutzer').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "columnDefs": [
+                    { "width": "10%", "targets": 0},
+                    { "width": "5%", "targets": 1},
+                    { "width": "7.5%", "targets": 2},
+                    { "width": "30%", "targets": 3},
+                    { "width": "30%", "targets": 4},
+                    { "width": "5%", "targets": 5},
+                    { "width": "5%", "targets": 6}
+                ]
+            });
+
+            // Apply the search
+            oTable.columns().every( function () {
+                var that = this;
+
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        that
+                                .search( this.value )
+                                .draw();
+                    }
+                } );
+            } );
+        });
+
+        $('.selectpicker').change(function (i) {
+            var x = i.target;
+            var schiedsrichterId;
+
+            for(var i = 1; i < x.length; i++)
+            {
+                if(x[i].selected == true)
+                {
+                    schiedsrichterId = $(x[i]).attr('id');
+                }
+            }
+
+            var column = x.parentNode.parentNode;
+            var schiedsrichterType = $(column).attr('id');
+            var row = column.parentNode;
+            var rowId = $(row).attr('id');
+            $.ajax({
+                type: "POST",
+                url: "http://wuzelfred.ddns.net:8080/schwarzar56378/HTML/SpielplanerstellungSchritt2.html",
+                data: {
+                    schiedsrichterId,
+                    schiedsrichterType,
+                    rowId
+                },
+                success: $("#successorder").show().delay(1000).fadeOut('slow')
+            });
+        });
+    </script>
+{% endblock %}

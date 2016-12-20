@@ -42,6 +42,12 @@ class Spielplan
      */
     private $spielzeitAlt;
 
+    /**
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Turnier", inversedBy="spielplan")
+     * @ORM\JoinColumn(name="turnier_id", referencedColumnName="id")
+     */
+    private $turnier;
+
 
     /**
      * Get id
@@ -124,5 +130,28 @@ class Spielplan
     {
         return $this->spielzeitAlt;
     }
-}
 
+    /**
+     * Set turnier
+     *
+     * @param \AppBundle\Entity\Turnier $turnier
+     *
+     * @return Spielplan
+     */
+    public function setTurnier(\AppBundle\Entity\Turnier $turnier = null)
+    {
+        $this->turnier = $turnier;
+
+        return $this;
+    }
+
+    /**
+     * Get turnier
+     *
+     * @return \AppBundle\Entity\Turnier
+     */
+    public function getTurnier()
+    {
+        return $this->turnier;
+    }
+}

@@ -4,12 +4,11 @@
     {{ parent() }}
 
     {% stylesheets
-    'bundles/teilnehmer/css/07_bootstrap-select.min.css'
     'bundles/teilnehmer/css/08_bootstrap-datetimepicker.css'
-    'bundles/teilnehmer/css/09_anmeldung.custom.css'
     'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
-    'bundles/teilnehmer/css/11_jquery.dataTables.min.css'
-    filter='cssrewrite' output='css/compiled/app.css'%}
+    'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
+        'bundles/turnierplan/css/16_turnierspezifika.custom.css'
+    filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
 {% endblock %}
@@ -21,7 +20,6 @@
         'bundles/teilnehmer/js/10_query.dataTables.min.js'
         'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
         'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
-        'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -60,4 +58,222 @@
         </div>
     </div>
 
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-1 control-label">Spielfelder</label>
+            <div class="col-md-4">
+                <div class="input-group spinner col-md-3">
+                    <input type="text" class="form-control" value="1" min="1" >
+                    <div class="input-group-btn-vertical">
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">Gesamtspielzeit (min)</label>
+            <div class="col-md-4">
+                <div class="input-group spinner col-md-3">
+
+                    <input type="text" class="form-control" value="1" min="1"  >
+                    <div class="input-group-btn-vertical">
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-1 control-label">Wechselzeit (min)</label>
+            <div class="col-md-4">
+                <div class="input-group spinner col-md-3">
+                    <input type="text" class="form-control" value="1" min="1" >
+                    <div class="input-group-btn-vertical">
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;" ><i class="glyphicon glyphicon-chevron-up"></i></button>
+                        <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;" ><i class="glyphicon glyphicon-chevron-down"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div id="Table">
+                <table class="table display table-bordered" id="tabelle_benutzer" cellspacing="0" width="100%">
+                    <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Start</th>
+                        <th>Ende</th>
+                        <th>Entfernen</th>
+                    </tr>
+                    </thead>
+                    <tbody id="Daten">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="datetimepicker1" class="col-md-1 control-label">Datum</label>
+            <div class="col-md-1" id="Date">
+                <div class="input-group date" id="datetimepicker1">
+                    <input type="text" class="form-control"/>
+                    <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"/>
+           </span>
+                </div>
+            </div>
+            <label for="datetimepicker2" class="col-md-1 control-label">Start</label>
+            <div class="col-md-1" id="StartTime">
+                <div class="input-group date" id="datetimepicker2">
+                    <input type="text" class="form-control"/>
+                    <span class="input-group-addon">
+            <span class="glyphicon glyphicon-time"/>
+           </span>
+                </div>
+            </div>
+            <label for="datetimepicker3" class="col-md-1 control-label">Ende</label>
+            <div class="col-md-1" id="EndTime">
+                <div class="input-group date" id="datetimepicker3">
+                    <input type="text" class="form-control"/>
+                    <span class="input-group-addon">
+            <span class="glyphicon glyphicon-time"/>
+           </span>
+                </div>
+            </div>
+            <div class="col-md-1" id="SpieltagHinzufügen">
+                <button class="btn btn-default" type="button" id="AddDaten"><i class="glyphicon glyphicon-plus-sign"></i></button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div id="SelectVereinskollision" class="col-md-2">
+                <div class="checkbox">
+                    <label><input type="checkbox">Vereinskollision beachten</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div id="SelectAnreise" class="col-md-2">
+                <div class="checkbox">
+                    <label><input type="checkbox">Anreise beachten</label>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+
+        $(document).ready(function() {
+            var table = $('#tabelle_benutzer').DataTable({
+                responsive: true,
+                'columnDefs': [{
+                    'targets': 3,
+                    'searchable':false,
+                    'orderable':false,
+                }],
+                'order': [1, 'dsc'],
+                "scrollY": "100px",
+                "bFilter": false,
+                "info": false,
+                "scrollCollapse": true,
+                "paging": false
+            });
+
+            var tableRowLength = $('#Daten tr').size() + 1;
+
+            var Date = 1;
+            var Time1 = 2;
+            var Time2 = 3;
+
+            for(var i = 0; i < tableRowLength; i++)
+            {
+                var datetimep = "datetimepicker" + Date;
+                Date += 3;
+
+                $('#' + datetimep).datetimepicker({
+                    locale: 'de',
+                    format: 'L'
+                });
+
+                var datetimep = "datetimepicker" + Time1;
+                Time1 += 3;
+
+                $('#' + datetimep).datetimepicker({
+                    locale: 'de',
+                    format: 'LT'
+                });
+
+                var datetimep = "datetimepicker" + Time2;
+                Time2 += 3;
+
+                $('#' + datetimep).datetimepicker({
+                    locale: 'de',
+                    format: 'LT'
+                });
+            }
+
+            $('#tabelle_benutzer tbody').on('click', '.RemoveDaten', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+
+        $(function(){
+            $('.spinner .btn:first-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('max') == undefined || parseInt(input.val()) < parseInt(input.attr('max'))) {
+                    input.val(parseInt(input.val(), 10) + 1);
+                } else {
+                    btn.next("disabled", true);
+                }
+            });
+            $('.spinner .btn:last-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('min') == undefined || parseInt(input.val()) > parseInt(input.attr('min'))) {
+                    input.val(parseInt(input.val(), 10) - 1);
+                } else {
+                    btn.prev("disabled", true);
+                }
+            });
+        });
+
+        var j = 6;
+        var tableRowAppend = $('#Daten');
+        var tableRowLength = $('#Daten tr').size() + 1;
+
+        $('#AddDaten').click(function() {
+
+            var date = $('#datetimepicker1').find("input").val();
+            var start = $('#datetimepicker2').find("input").val();
+            var end = $('#datetimepicker3').find("input").val();
+
+            if(date != "" && start != "" && end != "")
+            {
+                tableRowAppend.append('<tr><td>' + date + '</td><td>' + start +'</td><td>'+ end + '</td><td><button class="btn btn-default RemoveDaten" type="button"><i class="glyphicon glyphicon-minus-sign"></i></button></td></tr>') ;
+                tableRowLength++;
+
+                var table = document.getElementById("Table");
+
+                var splitDates = date.split(".");
+                var splitStart = start.split(":");
+                var dateStartUTC = Date.UTC(splitDates[2], splitDates[1] -1, splitDates[0], splitStart[0], splitStart[1],0,0);
+
+                var splitEnd = end.split(":");
+                var dateEndUTC = Date.UTC(splitDates[2], splitDates[1] -1, splitDates[0], splitEnd[0], splitEnd[1],0,0);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/turnierplan/erstellung/turniertag/api",
+                    data: {
+                        dateStartUTC,
+                        dateEndUTC
+                    }
+                });
+            }
+        } );
+    </script>
 {% endblock %}

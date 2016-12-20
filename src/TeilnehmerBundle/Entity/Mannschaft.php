@@ -66,28 +66,28 @@ class Mannschaft
     /**
      * @var int
      *
-     * @ORM\Column(name="starke", type="smallint")
+     * @ORM\Column(name="starke", type="smallint",nullable=true)
      */
     private $starke;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="herkunft", type="smallint")
+     * @ORM\Column(name="herkunft", type="smallint",nullable=true)
      */
     private $herkunft;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="liga", type="smallint")
+     * @ORM\Column(name="liga", type="smallint",nullable=true)
      */
     private $liga;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="ligaplatz", type="smallint")
+     * @ORM\Column(name="ligaplatz", type="smallint",nullable=true)
      */
     private $ligaplatz;
 

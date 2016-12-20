@@ -8,7 +8,8 @@
         {% stylesheets
             'bundles/base/css/*'
             'bundles/app/css/04_base.custom.css'
-                    filter='cssrewrite' %}
+            'bundles/app/css/06_clock.custom.css'
+                    filter='cssrewrite'%}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
@@ -23,10 +24,6 @@
 </head>
 
 <body>
-
-
-
-
     <div id="wrapper">
         <nav class="navbar navbar-default">
             <div class="container-fluid1">
@@ -43,8 +40,18 @@
                 <!-- Topmenue -->
                 <div class="navbar-collapse" id="bs-example-navbar-collapse-1">
                     <ul class="nav navbar-nav">
-                        {% if is_granted('ROLE_ADMIN') %}
-                        <li><a href="#">Turnier</a></li>
+                        {% if (is_granted('ROLE_TURNIER_VIEW') or is_granted('ROLE_TURNIER_DELETE'))  %}
+                            <li class="dropdown">
+                                <a href="#" class=" dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Turnier<span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    {% if (is_granted('ROLE_TURNIER_VIEW')) %}
+                                        <li><a href="{{ path('turnierEdit') }}">Turnierinformationen</a></li>
+                                    {% endif %}
+                                    {% if (is_granted('ROLE_TURNIER_DELETE')) %}
+                                        <li><a href="{{ path('turnierReset') }}">Zurücksetzen</a></li>
+                                    {% endif %}
+                                </ul>
+                            </li>
                         {% endif %}
 
                         {% if (is_granted('ROLE_USER_VIEW') or is_granted('ROLE_GROUP_VIEW'))  %}
@@ -74,17 +81,40 @@
                                 <li><a href="{{ path('schiedsrichterList') }}">Schiedsrichter</a></li>
                                 {% endif %}
                             </ul>
-                            {% endif %}
                         </li>
+                        {% endif %}
+
+                        {% if (is_granted('ROLE_MANNSCHAFT_VIEW') or is_granted('ROLE_VEREIN_VIEW')) %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle " data-toggle="dropdown" role="button" aria-haspopup="true"
+                               aria-expanded="false">Anmeldungen<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
+                                <li><a class="dropdown-toggle" href="{{ path('anmeldungList') }}" >Übersicht</a></li>
+                                {% endif %}
+                                <li class="dropdown-submenu">
+                                    <a class="test" tabindex="-1" href="#"  >Online </a>
+                                    <ul class="dropdown-menu">
+                                        {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
+                                        <li><a class="dropdown-toggle" href="{{ path('onlineMannschaftList') }}" >Mannschaft</a></li>
+                                        {% endif %}
+                                        {% if (is_granted('ROLE_VEREIN_VIEW')) %}
+                                        <li><a class="dropdown-toggle" href="{{ path('onlineVereinList') }}" >Verein</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        {% endif %}
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle topmenu-link" data-toggle="dropdown" role="button" aria-haspopup="true"
                                aria-expanded="false">Spielplan<span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">Spielplanübersicht</a></li>
+                                <li><a href="{{ path('turnierplanList') }}">Spielplanübersicht</a></li>
                                 <li><a href="{{ path('spAnmeldungList') }}">Spielplanerstellung</a></li>
-                                <li><a href="#">Ergebniserfassung</a></li>
-                                <li><a href="#">Schiedsrichtereinteilung</a></li>
+                                <li><a href="{{ path('turnierplanErgList') }}">Ergebniserfassung</a></li>
+                                <li><a href="{{ path('turnierplanSrList') }}">Schiedsrichtereinteilung</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="#"> <span class="glyphicon glyphicon-print" aria-hidden="true"></span> Drucken</a></li>
                                 <li role="separator" class="divider"></li>

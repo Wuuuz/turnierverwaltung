@@ -13,3 +13,7 @@ services:
     class: UserBundle\Form\GroupFormType
     tags:
        - { name: form.type, alias: app_group }
+  app.cors_listener:
+    class: OnlineAnmeldungBundle\Listener\CorsListener
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }

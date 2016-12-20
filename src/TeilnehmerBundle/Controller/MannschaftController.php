@@ -108,7 +108,6 @@ class MannschaftController extends Controller
                 $staerke = $form['liga']->getData()*10-$form['platz']->getData();
 
             $mannschaft->setStarke($staerke);
-            $mannschaft->setStatus(1);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($mannschaft);
@@ -167,7 +166,6 @@ class MannschaftController extends Controller
                         'Mannschaft mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Verein nicht vorhanden'
                     );
                 }
-
                 try {
                     $em->remove($mannschaft);
                     $em->flush();

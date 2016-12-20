@@ -6,11 +6,11 @@
  * Time: 14:53
  */
 
-namespace TurnierplanBundle\Entity;
+namespace TurnierplanBundle\Utils;
 
 class Spieltag{
 
-    private $spiele = array();
+    public $spiele = array();
 
     function addSpiel($spiel){
         array_push($this->spiele, $spiel);

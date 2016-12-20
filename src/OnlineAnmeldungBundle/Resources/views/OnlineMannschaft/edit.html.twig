@@ -1,0 +1,250 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets
+    'bundles/teilnehmer/css/07_bootstrap-select.min.css'
+    'bundles/teilnehmer/css/08_bootstrap-datetimepicker.css'
+    'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
+    'bundles/teilnehmer/css/11_jquery.dataTables.min.css'
+    filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block title %}Onlineanmeldung{% endblock %}
+
+{% block heading %}Online - Mannschaft bearbeiten{% endblock %}
+
+{% block leftMenu %}
+    {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
+        <li>
+            <a href="{{ path('vereinList') }}"><p class="fa fa-Verein fa-fw">Übersicht</p> </a>
+        </li>
+    {% endif %}
+    {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
+        <li>
+            <a href="{{ path('onlineMannschaftList') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Mannschaft</p> </a>
+        </li>
+    {% endif %}
+    {% if (is_granted('ROLE_VEREIN_VIEW')) %}
+        <li>
+            <a href="{{ path('onlineVereinList') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Verein</p> </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% form_theme form '@App/Form/fields.html.twig' %}
+
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+    <div class="row">
+        <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 50px; margin-top:10px; ">
+            <!-- butttons -->
+            {{ form_widget(form.save) }}
+
+            {{ form_widget(form.sichernUndSchliessen) }}
+
+            <a href="{{ path('onlineMannschaftList') }}" class="btn btn-default btn-lg btn-sm" type="button" style="color:red;">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true" style="color:red;"></span><b> Abbrechen</b></a>
+        </div>
+    </div>
+    {% if errors is defined %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in errors %}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <strong>{{ error.message }}</strong>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#Section1" role="tab" data-toggle="tab">Mannschaft</a></li>
+        <li role="presentation"><a href="#Section2" role="tab" data-toggle="tab">Ansprechpartner</a></li>
+    </ul>
+    <div class="tab-content">
+        <!-- Tab 1 -->
+        <div role="tabpanel" class="tab-pane fade in active" id="Section1">
+            <p>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="SelectVerein" class="col-md-2 control-label">Mannschaftsname</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.name) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="SelectVerein" class="col-md-2 control-label">Verein</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.verein) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="SelectAltersklasse" class="col-md-2 control-label">Altersklasse</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.altersklasse) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="SelectHerkunft" class="col-md-2 control-label">Herkunft</label>
+                    <div id="SelectHerkunft" class="col-md-3">
+                        {{ form_widget(form.herkunft) }}
+                    </div>
+                </div>
+                <div class="form-group" id="Leistungsklasse">
+                    <label for="SelectLeistungsklasse" class="col-md-2 control-label">Leistungsklasse</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.liga, {'attr': {'id': 'SelectLeistungsklasse'}}) }}
+                    </div>
+                    <label for="SelectPlatz" class="col-md-1 control-label">Platz</label>
+                    <div class="col-md-1">
+                        {{ form_widget(form.ligaplatz, {'attr': {'id': 'SelectPlatz'}}) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="countFields" class="col-md-2 control-label">Spieler</label>
+                    <div class="col-md-4">
+                        <div class="input-group spinner col-md-3">
+                            {{ form_widget(form.anzPersonen, {'attr': {'value': '0', 'min': '0'}}) }}
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="selectDate" class="col-md-2 control-label">Anreisetag</label>
+                    <div class="col-md-3">
+                        <div class="input-group date" id="datetimepicker1">
+                            {{ form_widget(form.ankunft) }}
+                            <span class="input-group-addon">
+                             <span class="glyphicon glyphicon-calendar"/>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="SelectÜbernachtung" class="col-md-2 control-label">Übernachtung</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.unterkunft) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="countFields" class="col-md-2 control-label">Schiedsrichter</label>
+                    <div class="col-md-4">
+                        <div class="input-group spinner col-md-3">
+                            {{ form_widget(form.anzSr, {'attr': {'value': '0', 'min': '0'}}) }}
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="countFields" class="col-md-2 control-label">Essenspauschalen</label>
+                    <div class="col-md-4">
+                        <div class="input-group spinner col-md-3">
+                            {{ form_widget(form.anzEssen, {'attr': {'value': '0', 'min': '0'}}) }}
+                            <div class="input-group-btn-vertical">
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
+                                <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </p>
+        </div>
+        <!-- Tab 2 -->
+        <div role="tabpanel" class="tab-pane fade" id="Section2">
+            <p>
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label for="inputName" class="col-md-2 control-label">Ansprechpartner</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvName) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="col-md-2 control-label">E-Mail Adresse</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvEmail) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputTelefonnummer" class="col-md-2 control-label">Telefonnummer</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvTelefon) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputStraße" class="col-md-2 control-label">Straße</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvStrasse) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPLZ" class="col-md-2 control-label">PLZ</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvPLZ) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputOrt" class="col-md-2 control-label">Ort</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvOrt) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputLand" class="col-md-2 control-label">Land</label>
+                    <div class="col-md-3">
+                        {{ form_widget(form.mvLand) }}
+                    </div>
+                </div>
+            </div>
+            </p>
+        </div>
+    </div>
+    {{ form_end(form) }}
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#datetimepicker1').datetimepicker({
+                locale: 'de'
+            });
+
+            $("input[type='radio']").click(function(){
+                var radioValue = $("input[name='mannschaft[herkunft]']:checked").val();
+                if(radioValue == "3"){
+                    document.getElementById("Leistungsklasse").style.display = "inline";
+                }
+                else {
+                    document.getElementById("Leistungsklasse").style.display = "none";
+                }
+            });
+        });
+
+        $(function(){
+            $('.spinner .btn:first-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('max') == undefined || parseInt(input.val()) < parseInt(input.attr('max'))) {
+                    input.val(parseInt(input.val(), 10) + 1);
+                } else {
+                    btn.next("disabled", true);
+                }
+            });
+            $('.spinner .btn:last-of-type').on('click', function() {
+                var btn = $(this);
+                var input = btn.closest('.spinner').find('input');
+                if (input.attr('min') == undefined || parseInt(input.val()) > parseInt(input.attr('min'))) {
+                    input.val(parseInt(input.val(), 10) - 1);
+                } else {
+                    btn.prev("disabled", true);
+                }
+            });
+        });
+    </script>
+{% endblock %}

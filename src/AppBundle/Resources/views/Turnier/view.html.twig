@@ -1,0 +1,43 @@
+{% extends '@App/base_left_menu.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block title %}Turnier{% endblock %}
+
+{% block heading %}Turnierinformationen anzeigen{% endblock %}
+
+{% block leftMenu %}
+    {% if (is_granted('ROLE_TURNIER_VIEW')) %}
+        <li>
+            <a href="{{ path('turnierEdit') }}"><p class="fa fa-Verein fa-fw">Turnierinfos</p> </a>
+        </li>
+    {% endif %}
+    {% if (is_granted('ROLE_TURNIER_DELETE')) %}
+        <li>
+            <a href="{{ path('turnierReset') }}"><p class="fa fa-bar-Mannschaft-o fa-fw">Zurücksetzen</p> </a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% form_theme form '@App/Form/fields.html.twig' %}
+
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+    {% if errors is defined %}
+        <div class="alert alert-danger" role="alert">
+            {% for error in errors %}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                <strong>{{ error.message }}</strong>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="form-group">
+    <label for="inputName" class="col-md-1 control-label">Turniername</label>
+    <div class="col-md-3">
+        {{ form_widget(form.name, {'attr': {'readonly': 'readonly'}})}}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
