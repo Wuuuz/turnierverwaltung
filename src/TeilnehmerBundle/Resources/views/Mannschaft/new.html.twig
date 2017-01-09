@@ -70,25 +70,25 @@
             <div class="form-horizontal">
                 <div class="form-group">
                     <label for="SelectVerein" class="col-md-2 control-label">Mannschaftsname</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.name) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="SelectVerein" class="col-md-2 control-label">Verein</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.verein) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="SelectAltersklasse" class="col-md-2 control-label">Altersklasse</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.altersklasse) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="SelectHerkunft" class="col-md-2 control-label">Herkunft</label>
-                    <div id="SelectHerkunft" class="col-md-3">
+                    <div id="SelectHerkunft" class="col-md-2">
                         {{ form_widget(form.herkunft) }}
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                 <div class="form-group">
                     <label for="countFields" class="col-md-2 control-label">Spieler</label>
                     <div class="col-md-4">
-                        <div class="input-group spinner col-md-3">
+                        <div class="input-group spinner col-md-2">
                             {{ form_widget(form.anzPersonen, {'attr': {'value': '0', 'min': '0'}}) }}
                             <div class="input-group-btn-vertical">
                                 <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
@@ -117,7 +117,7 @@
                 </div>
                 <div class="form-group">
                     <label for="selectDate" class="col-md-2 control-label">Anreisetag</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="input-group date" id="datetimepicker1">
                             {{ form_widget(form.ankunft) }}
                             <span class="input-group-addon">
@@ -127,15 +127,15 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="SelectÜbernachtung" class="col-md-2 control-label">Übernachtung</label>
-                    <div class="col-md-3">
+                    <label class="col-md-2 control-label">Übernachtung</label>
+                    <div class="col-md-2">
                         {{ form_widget(form.unterkunft) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="countFields" class="col-md-2 control-label">Schiedsrichter</label>
                     <div class="col-md-4">
-                        <div class="input-group spinner col-md-3">
+                        <div class="input-group spinner col-md-2">
                             {{ form_widget(form.anzSr, {'attr': {'value': '0', 'min': '0'}}) }}
                             <div class="input-group-btn-vertical">
                                 <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
@@ -147,7 +147,7 @@
                 <div class="form-group">
                     <label for="countFields" class="col-md-2 control-label">Essenspauschalen</label>
                     <div class="col-md-4">
-                        <div class="input-group spinner col-md-3">
+                        <div class="input-group spinner col-md-2">
                             {{ form_widget(form.anzEssen, {'attr': {'value': '0', 'min': '0'}}) }}
                             <div class="input-group-btn-vertical">
                                 <button class="btn btn-default" type="button"><i class="glyphicon glyphicon-chevron-up"></i></button>
@@ -165,43 +165,43 @@
             <div class="form-horizontal">
                 <div class="form-group">
                     <label for="inputName" class="col-md-2 control-label">Ansprechpartner</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvName) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail" class="col-md-2 control-label">E-Mail Adresse</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvEmail) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputTelefonnummer" class="col-md-2 control-label">Telefonnummer</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvTelefon) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputStraße" class="col-md-2 control-label">Straße</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvStrasse) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPLZ" class="col-md-2 control-label">PLZ</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvPLZ) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputOrt" class="col-md-2 control-label">Ort</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvOrt) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputLand" class="col-md-2 control-label">Land</label>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         {{ form_widget(form.mvLand) }}
                     </div>
                 </div>

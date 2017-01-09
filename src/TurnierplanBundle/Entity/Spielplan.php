@@ -43,6 +43,13 @@ class Spielplan
     private $spielzeitAlt;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="spielfeldBelegung", type="integer", nullable=true)
+     */
+    private $spielfeldBelegung;
+
+    /**
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Turnier", inversedBy="spielplan")
      * @ORM\JoinColumn(name="turnier_id", referencedColumnName="id")
      */
@@ -153,5 +160,29 @@ class Spielplan
     public function getTurnier()
     {
         return $this->turnier;
+    }
+
+    /**
+     * Set spielfeldBelegung
+     *
+     * @param integer $spielfeldBelegung
+     *
+     * @return Spielplan
+     */
+    public function setSpielfeldBelegung($spielfeldBelegung)
+    {
+        $this->spielfeldBelegung = $spielfeldBelegung;
+
+        return $this;
+    }
+
+    /**
+     * Get spielfeldBelegung
+     *
+     * @return integer
+     */
+    public function getSpielfeldBelegung()
+    {
+        return $this->spielfeldBelegung;
     }
 }

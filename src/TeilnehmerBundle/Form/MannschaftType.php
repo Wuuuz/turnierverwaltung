@@ -31,10 +31,14 @@ class MannschaftType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('u')
                     ->where('u.status > 0');
-    },
+                },
             ))
             ->add('altersklasse', EntityType::class, array(
                 'class' => 'TurnierplanBundle\Entity\Altersklasse',
+                'query_builder' => function (EntityRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.id != 8');
+                },
             ))
             ->add('herkunft', ChoiceType::class, array(
                 'choices' => array(

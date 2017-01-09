@@ -7,6 +7,7 @@
         'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
         'bundles/turnierplan/css/13_turnierplan.custom.css'
         'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
+        'bundles/turnierplan/css/20_bootstrap-toggle.min.css'
     filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
@@ -20,6 +21,7 @@
     'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
     'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
     'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+    'bundles/turnierplan/js/16_bootstrap-toggle.min.js'
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
@@ -51,6 +53,12 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-lg-12" style="padding-bottom: 10px;">
+            <input id="spielplanTyp" type="checkbox" data-toggle="toggle" data-on="dynamisch" data-off="statisch" data-size="small" name="spielplanTyp">
+        </div>
+    </div>
+
     <table class="table display" id="tabelle_benutzer" cellspacing="0" width="100%">
         <thead>
         <tr>
@@ -75,19 +83,6 @@
         </tr>
         </tfoot>
         <tbody>
-        {% for spiel in spiele %}
-
-        <tr id="{{ spiel.Id }}">
-            <td>{{ spiel.Uhrzeit|date("d.m.Y H:i") }}</td>
-            <td>{{ spiel.Spielfeld }}</td>
-            <td>{{ spiel.Altersklasse.Bezeichnung }}</td>
-            <td>{{ spiel.Mannschaft1.Name }}</td>
-            <td>{{ spiel.Mannschaft2.Name }}</td>
-            <td><input type="text" size="2" value="{{ spiel.ErgHeim }}"></td>
-            <td><input type="text" size="2" value="{{ spiel.ErgGast }}"></td>
-        </tr>
-
-        {% endfor %}
         </tbody>
     </table>
 
@@ -101,6 +96,12 @@
             } );
 
             var oTable = $('#tabelle_benutzer').DataTable({
+                "ajax": {
+                    "url": "/turnierplan/ergebniserfassung/api",
+                    "data": function ( d ) {
+                        d.ausgabeTyp = $('#spielplanTyp').prop('checked');
+                    }
+                },
                 "responsive": true,
                 "autoWidth": false,
                 "columnDefs": [
@@ -111,6 +112,15 @@
                     { "width": "30%", "targets": 4},
                     { "width": "5%", "targets": 5},
                     { "width": "5%", "targets": 6}
+                ],
+                "columns": [
+                    { "data": "uhrzeit" },
+                    { "data": "platz" },
+                    { "data": "jugend" },
+                    { "data": "heim" },
+                    { "data": "gast" },
+                    { "data": "ergHeim"},
+                    { "data": "ergGast"}
                 ]
             });
 
@@ -128,7 +138,33 @@
                     }
                 } );
             } );
+
+            $('input[type=checkbox][name=spielplanTyp]').change(function() {
+                oTable.ajax.reload();
+            });
         });
+
+        $(document).on('change', '.inputErg', function(i) {
+
+            var target = i.target;
+            var row = target.parentNode.parentNode;
+            var ergHeim = row.children[5].children[0].value;
+            var ergGast = row.children[6].children[0].value;
+
+            var spielId = $(row).attr('id');
+
+            $.ajax({
+                type: "POST",
+                url: "/turnierplan/ergebniserfassung/edit",
+                data: {
+                    ergHeim,
+                    ergGast,
+                    spielId
+                },
+            });
+        });
+
+
     </script>
 
 {% endblock %}

@@ -8,6 +8,7 @@
         'bundles/turnierplan/css/13_turnierplan.custom.css'
         'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
         'bundles/teilnehmer/css/07_bootstrap-select.min.css'
+        'bundles/turnierplan/css/20_bootstrap-toggle.min.css'
     filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
@@ -17,11 +18,12 @@
     {{ parent() }}
 
     {% javascripts
-    'bundles/teilnehmer/js/10_query.dataTables.min.js'
-    'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
-    'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
-    'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+        'bundles/teilnehmer/js/10_query.dataTables.min.js'
+        'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
+        'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
+        'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
         'bundles/base/js/08_bootstrap-select.min.js'
+        'bundles/turnierplan/js/16_bootstrap-toggle.min.js'
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
@@ -53,6 +55,12 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-lg-12" style="padding-bottom: 10px;">
+            <input id="spielplanTyp" type="checkbox" data-toggle="toggle" data-on="dynamisch" data-off="statisch" data-size="small" name="spielplanTyp">
+        </div>
+    </div>
+
     <table class="table display" id="tabelle_benutzer" cellspacing="0" width="100%">
         <thead>
         <tr>
@@ -77,34 +85,6 @@
         </tr>
         </tfoot>
         <tbody>
-            {% for spiel in spiele %}
-                <tr id="{{ spiel.Id }}">
-                    <td>{{ spiel.Uhrzeit|date("d.m.Y H:i") }}</td>
-                    <td>{{ spiel.Spielfeld }}</td>
-                    <td>{{ spiel.Altersklasse.Bezeichnung }}</td>
-                    <td>{{ spiel.Mannschaft1.Name }}</td>
-                    <td>{{ spiel.Mannschaft2.Name }}</td>
-                    <td id="ColumnSchiedsrichter1">
-                        <select class="selectpicker" data-live-search="true" title="Schiedsrichter1" id="SelectOptions1">
-                            <optgroup label="verfügbare Schiedsrichter">
-                                {% for sr in schiedsrichter %}
-                                    <option data-subtext="{{ sr.Verein.Name }}" value="{{ sr.Id }}">{{ sr.Name }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        </select>
-                    </td>
-                    <td id="ColumnSchiedsrichter2">
-                        <select class="selectpicker" data-live-search="true" title="Schiedsrichter2" id="SelectOptions2">
-                            <optgroup label="verfügbare Schiedsrichter">
-                                {% for sr in schiedsrichter %}
-                                    <option data-subtext="{{ sr.Verein.Name }}" value="{{ sr.Id }}">{{ sr.Name }}</option>
-                                {% endfor %}
-                            </optgroup>
-                        </select>
-                    </td>
-                </tr>
-
-            {% endfor %}
         </tbody>
     </table>
 
@@ -118,17 +98,28 @@
             } );
 
             var oTable = $('#tabelle_benutzer').DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                "columnDefs": [
-                    { "width": "10%", "targets": 0},
-                    { "width": "5%", "targets": 1},
-                    { "width": "7.5%", "targets": 2},
-                    { "width": "30%", "targets": 3},
-                    { "width": "30%", "targets": 4},
-                    { "width": "5%", "targets": 5},
-                    { "width": "5%", "targets": 6}
-                ]
+                "ajax": {
+                    "url": "/turnierplan/schiedsrichtereinteilung/api",
+                    "data": function ( d ) {
+                        d.ausgabeTyp = $('#spielplanTyp').prop('checked');
+                    }
+                },
+                responsive: true,
+                "columns": [
+                    { "data": "uhrzeit" },
+                    { "data": "platz" },
+                    { "data": "jugend" },
+                    { "data": "heim" },
+                    { "data": "gast" },
+                    { "data": "sr1"},
+                    { "data": "sr2"}
+                ],
+                "initComplete": function(settings, json) {
+                    $('.selectpicker').selectpicker('refresh');
+                },
+                "drawCallback": function(settings) {
+                    $('.selectpicker').selectpicker('refresh');
+                }
             });
 
             // Apply the search
@@ -143,34 +134,64 @@
                     }
                 } );
             } );
+
+            $('input[type=checkbox][name=spielplanTyp]').change(function() {
+                oTable.ajax.reload();
+            });
         });
 
-        $('.selectpicker').change(function (i) {
-            var x = i.target;
-            var schiedsrichterId;
+        var schiedsrichterId1;
+        var schiedsrichterId2;
 
-            for(var i = 1; i < x.length; i++)
+        $(document).on('change', '.selectpicker', function(i) {
+
+            schiedsrichterId1 = 0;
+            schiedsrichterId2 = 0;
+
+            var target = i.target;
+            var column = target.parentNode.parentNode;
+            var columnId = $(column).attr('id');
+            var row = column.parentNode;
+            var schiedsrichter1 = row.children[5].children[0].children[2];
+            var schiedsrichter2 = row.children[6].children[0].children[2];
+
+
+            for(var i = 1; i < schiedsrichter2.length; i++)
             {
-                if(x[i].selected == true)
+                if(schiedsrichter2[i].selected == true)
                 {
-                    schiedsrichterId = $(x[i]).attr('id');
+                    schiedsrichterId2 = target[i].value;
                 }
             }
 
-            var column = x.parentNode.parentNode;
-            var schiedsrichterType = $(column).attr('id');
-            var row = column.parentNode;
+            for(var i = 1; i < schiedsrichter1.length; i++)
+            {
+                if(schiedsrichter1[i].selected == true)
+                {
+                    schiedsrichterId1 = target[i].value;
+                }
+            }
+
+            if(schiedsrichterId1 == undefined)
+            {
+                schiedsrichterId1 = 0;
+            }
+            else if (schiedsrichterId2 == undefined)
+            {
+                schiedsrichterId2 = 0;
+            }
+
             var rowId = $(row).attr('id');
+
             $.ajax({
                 type: "POST",
-                url: "http://wuzelfred.ddns.net:8080/schwarzar56378/HTML/SpielplanerstellungSchritt2.html",
+                url: "/turnierplan/schiedsrichtereinteilung/edit",
                 data: {
-                    schiedsrichterId,
-                    schiedsrichterType,
+                    schiedsrichterId1,
+                    schiedsrichterId2,
                     rowId
                 },
-                success: $("#successorder").show().delay(1000).fadeOut('slow')
             });
         });
-    </script>
+        </script>
 {% endblock %}

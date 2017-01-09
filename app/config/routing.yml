@@ -1,3 +1,8 @@
+drucken:
+    resource: "@DruckenBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 online_anmeldung:
     resource: "@OnlineAnmeldungBundle/Controller/"
     type:     annotation

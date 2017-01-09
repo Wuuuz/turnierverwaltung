@@ -3,6 +3,7 @@
 namespace TeilnehmerBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -55,8 +56,21 @@ class MannschaftController extends Controller
             $mannschaft->setStatus(1);
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist($mannschaft);
-            $em->flush();
+            try {
+                $em->persist($mannschaft);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Mannschaft:new.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -110,8 +124,22 @@ class MannschaftController extends Controller
             $mannschaft->setStarke($staerke);
 
             $em = $this->getDoctrine()->getManager();
-            $em->persist($mannschaft);
-            $em->flush();
+
+            try {
+                $em->persist($mannschaft);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Mannschaft:edit.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -171,17 +199,17 @@ class MannschaftController extends Controller
                     $em->flush();
                     $this->addFlash(
                         'info',
-                        'Mannschaft mit ID ' . $id . ' erfolgreich gelöscht!'
+                        'Mannschaft ' . $mannschaft->getName() . ' erfolgreich gelöscht!'
                     );
                 } catch (ForeignKeyConstraintViolationException $e) {
                     $this->addFlash(
                         'danger',
-                        'Mannschaft mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
+                        'Mannschaft ' . $mannschaft->getName() . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
                     );
                 } catch (Exception $e) {
                     $this->addFlash(
                         'danger',
-                        'Mannschaft mit ID ' . $id . ' konnte nicht gelöscht werden!'
+                        'Mannschaft ' . $mannschaft->getName() . ' konnte nicht gelöscht werden!'
                     );
                 }
             }

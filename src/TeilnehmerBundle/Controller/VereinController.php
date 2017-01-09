@@ -3,10 +3,12 @@
 namespace TeilnehmerBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use TeilnehmerBundle\Entity\Verein;
 use Symfony\Component\HttpFoundation\Request;
 use TeilnehmerBundle\Form\VereinType;
@@ -38,6 +40,7 @@ class VereinController extends Controller
         $this->denyAccessUnlessGranted('ROLE_VEREIN_CREATE');
 
         $verein = new Verein();
+        $verein->setStatus(1);
 
         $form = $this->createForm(VereinType::class,$verein);
 
@@ -45,8 +48,22 @@ class VereinController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
              $em = $this->getDoctrine()->getManager();
-             $em->persist($verein);
-             $em->flush();
+
+            try {
+                $em->persist($verein);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Verein:new.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -90,8 +107,21 @@ class VereinController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($verein);
-            $em->flush();
+            try {
+                $em->persist($verein);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Verein:edit.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -99,7 +129,7 @@ class VereinController extends Controller
             );
 
             if($form->get('sichernUndSchliessen')->isClicked())
-                return $this->redirectToRoute('vereinUebersicht');
+                return $this->redirectToRoute('vereinList');
             if($form->get('save')->isClicked())
                 return $this->redirectToRoute('vereinEdit',array('id' => $verein->getId()));
         }
@@ -155,17 +185,17 @@ class VereinController extends Controller
                     $em->flush();
                     $this->addFlash(
                         'info',
-                        'Verein mit ID ' . $id . ' erfolgreich gelöscht!'
+                        'Verein ' . $verein->getName() . ' erfolgreich gelöscht!'
                     );
                 } catch (ForeignKeyConstraintViolationException $e) {
                     $this->addFlash(
                         'danger',
-                        'Verein mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
+                        'Verein ' . $verein->getName() . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
                     );
                 } catch (Exception $e) {
                     $this->addFlash(
                         'danger',
-                        'Verein mit ID ' . $id . ' konnte nicht gelöscht werden!'
+                        'Verein ' . $verein->getName() . ' konnte nicht gelöscht werden!'
                     );
                 }
             }

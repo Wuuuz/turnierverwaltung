@@ -10,4 +10,20 @@ namespace TurnierplanBundle\Repository;
  */
 class VorrundenspielRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findGespielteSpiele($altersklasse)
+    {
+        $em = $this->getEntityManager();
+        $qb = $em->createQueryBuilder();
+
+        $q  = $qb->select(array('p'))
+            ->from('TurnierplanBundle:Spiel', 'p')
+            ->where(
+                $qb->expr()->isNotNull('p.ergGast'),
+                $qb->expr()->isNotNull('p.ergHeim'),
+                $qb->expr()->eq('p.altersklasse', $altersklasse->getId())
+            )
+            ->getQuery();
+
+        return $q->getResult();
+    }
 }

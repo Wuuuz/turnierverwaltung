@@ -8,6 +8,9 @@
 
 namespace UserBundle\Controller;
 
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
@@ -52,7 +55,7 @@ class UserController extends Controller
         $user->setEnabled(true);
 
         $event = new GetResponseUserEvent($user, $request);
-        $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
+        //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, $event);
 
         $form = $this->createForm(UserFormType::class,$user,array('password' => true, 'information' => true));
         $form->setData($user);
@@ -62,9 +65,22 @@ class UserController extends Controller
         if ($form->isSubmitted()) {
             if ($form->isValid()) {
                 $event = new FormEvent($form, $request);
-                $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
+                //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $event);
 
-                $userManager->updateUser($user);
+                try {
+                    $userManager->updateUser($user);
+                }
+                catch(UniqueConstraintViolationException $e)
+                {
+                    $this->addFlash(
+                        'danger',
+                        'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                    );
+
+                    return $this->render('@User/User/new.html.twig', array(
+                        'form' => $form->createView(),
+                    ));
+                }
 
                 $this->addFlash(
                     'info',
@@ -83,7 +99,7 @@ class UserController extends Controller
             }
 
             $event = new FormEvent($form, $request);
-            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_FAILURE, $event);
+            //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_FAILURE, $event);
 
             if (null !== $response = $event->getResponse()) {
                 return $response;
@@ -113,7 +129,7 @@ class UserController extends Controller
         $dispatcher = $this->get('event_dispatcher');
 
         $event = new GetResponseUserEvent($user, $request);
-        $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_INITIALIZE, $event);
+        //$dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_INITIALIZE, $event);
 
         $form = $this->createForm(UserFormType::class,$user,array('password' => false, 'information' => true));
         $form->setData($user);
@@ -125,9 +141,22 @@ class UserController extends Controller
             $userManager = $this->get('fos_user.user_manager');
 
             $event = new FormEvent($form, $request);
-            $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
+            //$dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
 
-            $userManager->updateUser($user);
+            try {
+                $userManager->updateUser($user);
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('@User/User/edit.html.twig', array(
+                    'form' => $form->createView(),
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -142,7 +171,7 @@ class UserController extends Controller
                 $response = new RedirectResponse($url);
             }
 
-            $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+            //$dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
 
             return $response;
         }
@@ -172,7 +201,7 @@ class UserController extends Controller
         $dispatcher = $this->get('event_dispatcher');
 
         $event = new GetResponseUserEvent($user, $request);
-        $dispatcher->dispatch(FOSUserEvents::RESETTING_RESET_INITIALIZE, $event);
+        //$dispatcher->dispatch(FOSUserEvents::RESETTING_RESET_INITIALIZE, $event);
 
         $form = $this->createForm(UserFormType::class,$user,array('password' => true, 'information' => false));
         $form->setData($user);
@@ -181,18 +210,22 @@ class UserController extends Controller
 
         if ($form->isValid()) {
             $event = new FormEvent($form, $request);
-            $dispatcher->dispatch(FOSUserEvents::RESETTING_RESET_SUCCESS, $event);
+            //$dispatcher->dispatch(FOSUserEvents::RESETTING_RESET_SUCCESS, $event);
 
             $userManager->updateUser($user);
 
             if (null === $response = $event->getResponse()) {
-                $url = $this->generateUrl('benutzerList');
-                $response = new RedirectResponse($url);
-
                 $this->addFlash(
                     'info',
                     'Passwort erfolgreich geändert'
                 );
+
+                if($form->get('sichernUndSchliessen')->isClicked())
+                    $url = $this->generateUrl('benutzerList');
+                else if($form->get('save')->isClicked())
+                    $url = $this->generateUrl('benutzerPwEdit', array('id' => $user->getId()));
+
+                $response = new RedirectResponse($url);
             }
 
             return $response;
@@ -200,6 +233,7 @@ class UserController extends Controller
 
         return $this->render('@User/User/passwordEdit.html.twig', array(
             'form' => $form->createView(),
+            'username' => $user->getName(),
         ));
     }
 
@@ -245,7 +279,7 @@ class UserController extends Controller
                 $em = $this->getDoctrine()->getManager();
 
                 try {
-                    $gruppe = $this->getDoctrine()
+                    $user = $this->getDoctrine()
                         ->getRepository('UserBundle:User')
                         ->findOneBy(array('id' => $id));
                 } catch (NotFoundHttpException $e) {
@@ -256,21 +290,21 @@ class UserController extends Controller
                 }
 
                 try {
-                    $em->remove($gruppe);
+                    $em->remove($user);
                     $em->flush();
                     $this->addFlash(
                         'info',
-                        'Benutzer mit ID ' . $id . ' erfolgreich gelöscht!'
+                        'Benutzer ' . $user->getName() . ' erfolgreich gelöscht!'
                     );
                 } catch (ForeignKeyConstraintViolationException $e) {
                     $this->addFlash(
                         'danger',
-                        'Benutzer mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
+                        'Benutzer ' . $user->getName() . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
                     );
                 } catch (Exception $e) {
                     $this->addFlash(
                         'danger',
-                        'Benutzer mit ID ' . $id . ' konnte nicht gelöscht werden!'
+                        'Benutzer ' . $user->getName() . ' konnte nicht gelöscht werden!'
                     );
                 }
             }

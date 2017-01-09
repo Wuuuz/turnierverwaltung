@@ -25,64 +25,55 @@ class AnmeldungUebersichtController extends Controller
     {
         $alterklasseWrapperArray = array();
 
-        $altersklassen = $this->getDoctrine()
-            ->getRepository('TurnierplanBundle:Altersklasse')
-            ->findBy(array(), array('alter' => 'ASC', 'geschlecht' => 'ASC'));
+        $jugenden = $this->getDoctrine()
+            ->getRepository('TurnierplanBundle:Jugend')
+            ->findAll();
 
-        for($i = 0; $i < count($altersklassen); $i++)
+        $counter = 0;
+
+        foreach($jugenden as $jugend)
         {
+            $altersklassen = $this->getDoctrine()
+                ->getRepository('TurnierplanBundle:Altersklasse')
+                ->findBy(array('jugend' => $jugend), array('geschlecht' => 'ASC'));
+
             $alterklasseWrapper = new AnmeldungAltersklasseWrapper();
-            $alterklasseWrapper->setAlterklasseBez($this->mapJugend($altersklassen[$i]->getAlter()));
-            $alterklasseWrapper->setId($i);
+            $alterklasseWrapper->setJugendBez($jugend->getBezeichnung());
+            $alterklasseWrapper->setId($counter++);
 
-            $mannschaften = $this->getDoctrine()
-                ->getRepository('TeilnehmerBundle:Mannschaft')
-                ->findMannschaftByStatusCompare(1,$altersklassen[$i]);
+            foreach($altersklassen as $altersklasse)
+            {
+                $mannschaften = $this->getDoctrine()
+                    ->getRepository('TeilnehmerBundle:Mannschaft')
+                    ->findMannschaftByStatusCompare(1,$altersklasse);
 
-            if(count($mannschaften) > 0){
-                $mannschaftsWrapper = new AnmeldungMannschaftWrapper();
-                $mannschaftsWrapper->setGeschlechtBez($this->mapGeschlecht($altersklassen[$i]->getGeschlecht()));
-                $mannschaftsWrapper->setMannschaften($mannschaften);
-                $alterklasseWrapper->setMannschaftWrapper1($mannschaftsWrapper);
+                if(count($mannschaften) > 0)
+                {
+                    $mannschaftsWrapper = new AnmeldungMannschaftWrapper();
+                    $mannschaftsWrapper->setGeschlechtBez($this->mapGeschlecht($altersklasse->getGeschlecht()));
+                    $mannschaftsWrapper->setMannschaften($mannschaften);
+
+                    if($alterklasseWrapper->getMannschaftWrapper1() == null)
+                        $alterklasseWrapper->setMannschaftWrapper1($mannschaftsWrapper);
+                    elseif ($alterklasseWrapper->getMannschaftWrapper2() == null)
+                        $alterklasseWrapper->setMannschaftWrapper1($mannschaftsWrapper);
+                    else{
+                        $alterklasseWrapper2 = new AnmeldungAltersklasseWrapper();
+                        $alterklasseWrapper2->setJugendBez($jugend->getBezeichnung());
+                    }
+                }
+            }
+            if($alterklasseWrapper->getMannschaftWrapper1() != null) {
+                array_push($alterklasseWrapperArray, $alterklasseWrapper);
+                if($alterklasseWrapper->getMannschaftWrapper2() != null)
+                    array_push($alterklasseWrapperArray, $alterklasseWrapper2);
             }
 
-            if(isset($altersklassen[$i+1]))
-                if($altersklassen[$i+1]->getAlter() == $altersklassen[$i]->getAlter()){
-                    $mannschaften = $this->getDoctrine()
-                        ->getRepository('TeilnehmerBundle:Mannschaft')
-                        ->findMannschaftByStatusCompare(1,$altersklassen[$i+1]);
-
-                    if(count($mannschaften) > 0){
-                        $mannschaftsWrapper = new AnmeldungMannschaftWrapper();
-                        $mannschaftsWrapper->setGeschlechtBez($this->mapGeschlecht($altersklassen[$i+1]->getGeschlecht()));
-                        $mannschaftsWrapper->setMannschaften($mannschaften);
-                        $alterklasseWrapper->setMannschaftWrapper2($mannschaftsWrapper);
-                    }
-                    $i++;
-                }
-            array_push($alterklasseWrapperArray,$alterklasseWrapper);
-
         }
 
-        return $this->render('TurnierplanBundle:AnmeldungUebersicht:list.html.twig', array(
+        return $this->render('@Turnierplan/AnmeldungUebersicht/list.html.twig', array(
             'altersklassen' => $alterklasseWrapperArray
         ));
-    }
-
-    private function mapJugend($jugend)
-    {
-        switch($jugend) {
-            case '1':
-                return "Jugend D";
-            case '2':
-                return "Jugend C";
-            case '3':
-                return "Jugend B";
-            case '4':
-                return "Jugend A";
-            case '5':
-                return "Senioren";
-        }
     }
 
     private function mapGeschlecht($geschlecht){

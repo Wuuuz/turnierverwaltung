@@ -12,7 +12,7 @@
 {% block leftMenu %}
     {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}
         <li>
-            <a href="{{ path('vereinList') }}"><p class="fa fa-Verein fa-fw">Übersicht</p> </a>
+            <a href="{{ path('anmeldungList') }}"><p class="fa fa-Verein fa-fw">Übersicht</p> </a>
         </li>
     {% endif %}
     {% if (is_granted('ROLE_MANNSCHAFT_VIEW')) %}

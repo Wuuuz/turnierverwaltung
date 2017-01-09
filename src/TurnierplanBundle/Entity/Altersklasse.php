@@ -50,11 +50,10 @@ class Altersklasse
     private $geschlecht;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="alter", type="smallint")
+     * @ORM\ManyToOne(targetEntity="Jugend")
+     * @ORM\JoinColumn(name="jugend_id", referencedColumnName="id")
      */
-    private $alter;
+    private $jugend;
 
 
     /**
@@ -169,26 +168,26 @@ class Altersklasse
     }
 
     /**
-     * Set alter
+     * Set jugend
      *
-     * @param integer $alter
+     * @param integer $jugend
      *
      * @return Altersklasse
      */
-    public function setAlter($alter)
+    public function setJugend($jugend)
     {
-        $this->alter = $alter;
+        $this->jugend = $jugend;
 
         return $this;
     }
 
     /**
-     * Get alter
+     * Get jugend
      *
      * @return integer
      */
-    public function getAlter()
+    public function getJugend()
     {
-        return $this->alter;
+        return $this->jugend;
     }
 }

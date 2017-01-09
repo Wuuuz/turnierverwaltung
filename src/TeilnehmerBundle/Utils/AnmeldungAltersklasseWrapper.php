@@ -11,7 +11,7 @@ namespace TeilnehmerBundle\Utils;
 
 class AnmeldungAltersklasseWrapper
 {
-    private $alterklasseBez;
+    private $jugendBez;
     private $id;
     private $mannschaftWrapper1;
     private $mannschaftWrapper2;
@@ -19,17 +19,17 @@ class AnmeldungAltersklasseWrapper
     /**
      * @return mixed
      */
-    public function getAlterklasseBez()
+    public function getJugendBez()
     {
-        return $this->alterklasseBez;
+        return $this->jugendBez;
     }
 
     /**
-     * @param mixed $alterklasseBez
+     * @param mixed $jugendBez
      */
-    public function setAlterklasseBez($alterklasseBez)
+    public function setJugendBez($jugendBez)
     {
-        $this->alterklasseBez = $alterklasseBez;
+        $this->jugendBez = $jugendBez;
     }
 
     /**

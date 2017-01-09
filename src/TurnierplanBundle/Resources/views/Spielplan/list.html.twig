@@ -7,6 +7,7 @@
         'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
         'bundles/turnierplan/css/13_turnierplan.custom.css'
         'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
+        'bundles/turnierplan/css/20_bootstrap-toggle.min.css'
     filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
@@ -20,6 +21,7 @@
     'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
     'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
     'bundles/teilnehmer/js/13_responsive.bootstrap.min.js'
+        'bundles/turnierplan/js/16_bootstrap-toggle.min.js'
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
@@ -31,16 +33,16 @@
 
 {% block leftMenu %}
     <li>
-        <a href=""><p class="fa fa-fw">Spielplanübersicht</p> </a>
+        <a href="{{ path('turnierplanList') }}"><p class="fa fa-fw">Spielplanübersicht</p> </a>
     </li>
     <li>
-        <a href=""><p class="fa  fa-fw">Spielplanerstellung</p> </a>
+        <a href="{{ path('turnierplanList') }}"><p class="fa  fa-fw">Spielplanerstellung</p> </a>
     </li>
     <li>
-        <a href=""><p class="fa fa-fw">Ergebniseingabe</p></a>
+        <a href="{{ path('turnierplanErgList') }}"><p class="fa fa-fw">Ergebniseingabe</p></a>
     </li>
     <li>
-        <a href=""><p class="fa  fa-fw">Schiedsrichtereint.</p> </a>
+        <a href="{{ path('turnierplanSrList') }}"><p class="fa  fa-fw">Schiedsrichtereint.</p> </a>
     </li>
     <li>
         <a href=""><p class="fa fa-fw">Drucken</p></a>
@@ -51,6 +53,18 @@
 {% endblock %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-lg-12" style="color:rgb(210,7,2); min-height: 40px; margin-top:10px; ">
+            <button class="btn btn-default btn-lg btn-sm " style="color: rgba(13, 135, 13, 1);" type="button" id="reloadSpiele">
+            <span class="glyphicon glyphicon-refresh" aria-hidden="true" style="color:rgba(13, 135, 13, 1);"></span><b> Spiele neu berechnen</b></button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12" style="padding-bottom: 10px;">
+            <input id="spielplanTyp" type="checkbox" data-toggle="toggle" data-on="dynamisch" data-off="statisch" data-size="small" name="spielplanTyp">
+        </div>
+    </div>
+
     <table class="table display" id="tabelle_benutzer" cellspacing="0" width="100%">
         <thead>
         <tr>
@@ -75,23 +89,39 @@
         </tr>
         </tfoot>
         <tbody>
-        {% for spiel in spiele %}
-
-        <tr id="{{ spiel.Id }}">
-            <td>{{ spiel.Uhrzeit|date("d.m.Y H:i") }}</td>
-            <td>{{ spiel.Spielfeld }}</td>
-            <td>{{ spiel.Altersklasse.Bezeichnung }}</td>
-            <td>{{ spiel.Mannschaft1.Name }}</td>
-            <td>{{ spiel.Mannschaft2.Name }}</td>
-            <td>{{ spiel.Schiedsrichter1 }}</td>
-            <td>{{ spiel.ergHeim }}</td>
-        </tr>
-
-        {% endfor %}
         </tbody>
     </table>
 
     <script>
+        var oTable = $('#tabelle_benutzer').DataTable({
+            "ajax": {
+                "url": "/turnierplan/spiele/api",
+                "data": function ( d ) {
+                    d.ausgabeTyp = $('#spielplanTyp').prop('checked');
+                }
+            },
+            "responsive": true,
+            "autoWidth": false,
+            "columnDefs": [
+                { "width": "10%", "targets": 0},
+                { "width": "5%", "targets": 1},
+                { "width": "7.5%", "targets": 2},
+                { "width": "17.5%", "targets": 3},
+                { "width": "17.5%", "targets": 4},
+                { "width": "15%", "targets": 5},
+                { "width": "7.5%", "targets": 6}
+            ],
+            "columns": [
+                { "data": "uhrzeit" },
+                { "data": "platz" },
+                { "data": "jugend" },
+                { "data": "heim" },
+                { "data": "gast" },
+                { "data": "schiedsrichter"},
+                { "data": "ergebnis"}
+            ]
+        });
+
         $(document).ready(function() {
 
             // Setup - add a text input to each footer cell
@@ -100,19 +130,7 @@
                 $(this).html( '<input type="text" placeholder="'+ title +'" />' );
             } );
 
-            var oTable = $('#tabelle_benutzer').DataTable({
-                "responsive": true,
-                "autoWidth": false,
-                "columnDefs": [
-                    { "width": "10%", "targets": 0},
-                    { "width": "5%", "targets": 1},
-                    { "width": "7.5%", "targets": 2},
-                    { "width": "17.5%", "targets": 3},
-                    { "width": "17.5%", "targets": 4},
-                    { "width": "15%", "targets": 5},
-                    { "width": "7.5%", "targets": 6}
-                ]
-            });
+
 
             oTable.columns.adjust().draw();
 
@@ -128,6 +146,20 @@
                     }
                 } );
             } );
+        });
+
+        $('#reloadSpiele').on('click', function(){
+            $.ajax({
+                type: "POST",
+                url: "/turnierplan/berechnen/spiele"
+            }).done(function () {
+                oTable.ajax.reload();
+            });
+
+        });
+
+        $('input[type=checkbox][name=spielplanTyp]').change(function() {
+            oTable.ajax.reload();
         });
     </script>
 

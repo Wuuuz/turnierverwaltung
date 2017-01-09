@@ -23,7 +23,7 @@ class OnlineAPIController extends Controller
         //Verein anlegen
         $verein = $this->getDoctrine()
             ->getRepository('TeilnehmerBundle:Verein')
-            ->findBy(array('name' => $request->request->get('vereinsname')));
+            ->findOneBy(array('name' => $request->request->get('vereinsname')));
 
         if ($request->request->get('vereinsname') == "")
             return new Response('Vereinsname equals null',Response::HTTP_BAD_REQUEST);
@@ -57,7 +57,7 @@ class OnlineAPIController extends Controller
                 ->setAnzPersonen($mannschaften[$i][2])
                 ->setAnkunft(date_create_from_format('d.m.Y H:i',$mannschaften[$i][3]))
                 ->setUnterkunft($this->getDoctrine()
-                    ->getRepository('TurnierplanBundle:Altersklasse')
+                    ->getRepository('TeilnehmerBundle:Unterkunft')
                     ->findOneBy(array('id' => $mannschaften[$i][4])))
                 ->setAnzSr($mannschaften[$i][5])
                 ->setAnzEssen($mannschaften[$i][6])
@@ -75,6 +75,6 @@ class OnlineAPIController extends Controller
 
         $em->flush();
 
-        return new Response(count($mannschaften));
+        return new Response();
     }
 }

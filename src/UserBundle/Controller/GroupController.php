@@ -10,6 +10,8 @@ namespace UserBundle\Controller;
 
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Exception;
 use FOS\UserBundle\Event\FilterGroupResponseEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\GetResponseGroupEvent;
@@ -107,7 +109,20 @@ class GroupController extends BaseController
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::GROUP_EDIT_SUCCESS, $event);
 
-            $groupManager->updateGroup($group);
+            try {
+                $groupManager->updateGroup($group);
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('FOSUserBundle:Group:new.html.twig', array(
+                    'form' => $form->createView(),
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -115,11 +130,14 @@ class GroupController extends BaseController
             );
 
             if (null === $response = $event->getResponse()) {
-                $url = $this->generateUrl('fos_user_group_edit', array('id' => $group->getId()));
+                if($form->get('sichernUndSchliessen')->isClicked())
+                    $url = $this->generateUrl('fos_user_group_list');
+                else if($form->get('save')->isClicked())
+                    $url = $this->generateUrl('fos_user_group_edit', array('id' => $group->getId()));
                 $response = new RedirectResponse($url);
             }
 
-            $dispatcher->dispatch(FOSUserEvents::GROUP_EDIT_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+            //$dispatcher->dispatch(FOSUserEvents::GROUP_EDIT_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
 
             return $response;
         }
@@ -169,7 +187,20 @@ class GroupController extends BaseController
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::GROUP_CREATE_SUCCESS, $event);
 
-            $groupManager->updateGroup($group);
+            try {
+                $groupManager->updateGroup($group);
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('FOSUserBundle:Group:new.html.twig', array(
+                    'form' => $form->createView(),
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -185,7 +216,7 @@ class GroupController extends BaseController
                 $response = new RedirectResponse($url);
             }
 
-            $dispatcher->dispatch(FOSUserEvents::GROUP_CREATE_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
+            //$dispatcher->dispatch(FOSUserEvents::GROUP_CREATE_COMPLETED, new FilterGroupResponseEvent($group, $request, $response));
 
             return $response;
         }
@@ -220,6 +251,7 @@ class GroupController extends BaseController
                     $gruppe = $this->getDoctrine()
                         ->getRepository('UserBundle:Group')
                         ->findOneBy(array('id' => $id));
+
                 } catch (NotFoundHttpException $e) {
                     $this->addFlash(
                         'warning',

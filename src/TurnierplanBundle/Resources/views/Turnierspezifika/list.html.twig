@@ -8,6 +8,7 @@
     'bundles/teilnehmer/css/10_responsive.bootstrap.min.css'
     'bundles/teilnehmer/css/12_datatable.bootstrap.min.css'
         'bundles/turnierplan/css/16_turnierspezifika.custom.css'
+        'bundles/teilnehmer/css/07_bootstrap-select.min.css'
     filter='cssrewrite' %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
@@ -20,6 +21,7 @@
         'bundles/teilnehmer/js/10_query.dataTables.min.js'
         'bundles/teilnehmer/js/11_dataTables.bootstrap.min.js'
         'bundles/teilnehmer/js/12_dataTables.responsive.min.js'
+            'bundles/base/js/08_bootstrap-select.min.js'
         %}
         <script src="{{ asset_url }}"></script>
         {% endjavascripts %}
@@ -51,19 +53,20 @@
 {% endblock %}
 
 {% block content %}
+    <form class="form-horizontal" method="post" action="{{ path('spVerteilen') }}">
+
     <div class="row">
         <div class="col-lg-12" style="min-height: 50px; margin-top:10px; ">
-            <a href="{{ path('spGruppenEinteilen') }}" class="btn btn-default btn-lg btn-sm" type="button">
-                <span class="glyphicon glyphicon-th-large" aria-hidden="true" style=""></span><b>Gruppen einteilen</b></a>
+            <button class="btn btn-default btn-lg btn-sm" type="submit">
+                <span class="glyphicon glyphicon-th-large" aria-hidden="true" style=""></span><b>Spiele verteilen</b></button>
         </div>
     </div>
 
-    <form class="form-horizontal">
         <div class="form-group">
             <label class="col-md-1 control-label">Spielfelder</label>
             <div class="col-md-4">
                 <div class="input-group spinner col-md-3">
-                    <input type="text" class="form-control" value="1" min="1" >
+                    <input type="text" name="input_spielfelder" class="form-control" value="1" min="1" >
                     <div class="input-group-btn-vertical">
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-up"></i></button>
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-down"></i></button>
@@ -72,13 +75,24 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label class="col-md-1 control-label label_platzierung">Spielfeldtreue</label>
+
+            <select class="selectpicker" name="input_spielfelderbelegung" required>
+                <optgroup>
+                    <option value="1">ja</option>
+                    <option value="2">nein</option>
+                </optgroup>
+            </select>
+
+        </div>
 
         <div class="form-group">
-            <label class="col-md-1 control-label">Gesamtspielzeit (min)</label>
-            <div class="col-md-4">
-                <div class="input-group spinner col-md-3">
+            <label class="col-lg-1 control-label">Gesamtspielzeit (min)</label>
+            <div class="col-lg-4">
+                <div class="input-group spinner col-lg-3">
 
-                    <input type="text" class="form-control" value="1" min="1"  >
+                    <input type="text" name="input_spielzeit" class="form-control" value="1" min="1"  >
                     <div class="input-group-btn-vertical">
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-up"></i></button>
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;"><i class="glyphicon glyphicon-chevron-down"></i></button>
@@ -91,7 +105,7 @@
             <label class="col-md-1 control-label">Wechselzeit (min)</label>
             <div class="col-md-4">
                 <div class="input-group spinner col-md-3">
-                    <input type="text" class="form-control" value="1" min="1" >
+                    <input type="text" name="input_wechselzeit" class="form-control" value="1" min="1" >
                     <div class="input-group-btn-vertical">
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;" ><i class="glyphicon glyphicon-chevron-up"></i></button>
                         <button class="btn btn-default" type="button" style="padding-left:10px;padding-right:10px;" ><i class="glyphicon glyphicon-chevron-down"></i></button>
@@ -102,7 +116,7 @@
 
         <div class="form-group">
             <div id="Table">
-                <table class="table display table-bordered" id="tabelle_benutzer" cellspacing="0" width="100%">
+                <table class="table display table-bordered" id="tabelle_benutzer">
                     <thead>
                     <tr>
                         <th>Datum</th>
@@ -112,6 +126,14 @@
                     </tr>
                     </thead>
                     <tbody id="Daten">
+                    {#{% for turniertag in turniertage %}#}
+                        {#<tr id="{{ turniertag.Id }}">#}
+                            {#<td>{{ turniertag.UhrzBeginn|date("d.m.Y") }}</td>#}
+                            {#<td>{{ turniertag.UhrzBeginn|date("H:i") }}</td>#}
+                            {#<td>{{ turniertag.UhrzEnde|date("H:i") }}</td>#}
+                            {#<td><button class="btn btn-default RemoveDaten" type="button"><i class="glyphicon glyphicon-minus-sign"></i></button></td>#}
+                        {#</tr>#}
+                    {#{% endfor %}#}
                     </tbody>
                 </table>
             </div>
@@ -145,7 +167,7 @@
            </span>
                 </div>
             </div>
-            <div class="col-md-1" id="SpieltagHinzufügen">
+            <div class="col-md-1" id="SpieltagHinzufÃ¼gen">
                 <button class="btn btn-default" type="button" id="AddDaten"><i class="glyphicon glyphicon-plus-sign"></i></button>
             </div>
         </div>
@@ -166,59 +188,50 @@
     </form>
     <script>
 
-        $(document).ready(function() {
-            var table = $('#tabelle_benutzer').DataTable({
-                responsive: true,
-                'columnDefs': [{
-                    'targets': 3,
-                    'searchable':false,
-                    'orderable':false,
-                }],
-                'order': [1, 'dsc'],
-                "scrollY": "100px",
-                "bFilter": false,
-                "info": false,
-                "scrollCollapse": true,
-                "paging": false
-            });
 
-            var tableRowLength = $('#Daten tr').size() + 1;
+        var tableRowLength = $('#Daten tr').size() + 1;
 
-            var Date = 1;
-            var Time1 = 2;
-            var Time2 = 3;
+        $('#datetimepicker1').datetimepicker({
+            locale: 'de',
+            format: 'L',
+        });
 
-            for(var i = 0; i < tableRowLength; i++)
-            {
-                var datetimep = "datetimepicker" + Date;
-                Date += 3;
+        $('#datetimepicker2, #datetimepicker3').datetimepicker({
+            locale: 'de',
+            format: 'LT',
+        });
 
-                $('#' + datetimep).datetimepicker({
-                    locale: 'de',
-                    format: 'L'
-                });
+        $('#tabelle_benutzer tbody').on('click', '.RemoveDaten', function () {
+            var row = $(this).closest('tr').remove();
+            var tagId = $(row).attr('id');
 
-                var datetimep = "datetimepicker" + Time1;
-                Time1 += 3;
-
-                $('#' + datetimep).datetimepicker({
-                    locale: 'de',
-                    format: 'LT'
-                });
-
-                var datetimep = "datetimepicker" + Time2;
-                Time2 += 3;
-
-                $('#' + datetimep).datetimepicker({
-                    locale: 'de',
-                    format: 'LT'
-                });
-            }
-
-            $('#tabelle_benutzer tbody').on('click', '.RemoveDaten', function () {
-                $(this).closest('tr').remove();
+            $.ajax({
+                type: "POST",
+                url: "/turnierplan/erstellung/turniertag/api/delete",
+                data: {
+                    tagId
+                }
+            }).done(function () {
+                oTable.ajax.reload();
             });
         });
+
+        var oTable = $('#tabelle_benutzer').DataTable({
+            responsive: true,
+            "ajax": "/turnierplan/erstellung/turniertag/api/json",
+            "bAutoWidth": false,
+            "bFilter": false,
+            "info": false,
+            "scrollCollapse": true,
+            "paging": false,
+            "columns": [
+                { "data": "tag" },
+                { "data": "anfang" },
+                { "data": "ende" },
+                { "data": "button" },
+            ]
+        });
+
 
         $(function(){
             $('.spinner .btn:first-of-type').on('click', function() {
@@ -244,8 +257,10 @@
         var j = 6;
         var tableRowAppend = $('#Daten');
         var tableRowLength = $('#Daten tr').size() + 1;
+        var counter = 1;
 
-        $('#AddDaten').click(function() {
+        $('#AddDaten').click(function()
+        {
 
             var date = $('#datetimepicker1').find("input").val();
             var start = $('#datetimepicker2').find("input").val();
@@ -253,7 +268,7 @@
 
             if(date != "" && start != "" && end != "")
             {
-                tableRowAppend.append('<tr><td>' + date + '</td><td>' + start +'</td><td>'+ end + '</td><td><button class="btn btn-default RemoveDaten" type="button"><i class="glyphicon glyphicon-minus-sign"></i></button></td></tr>') ;
+                tableRowAppend.append('<tr id="row' + counter + '"><td>' + date + '</td><td>' + start +'</td><td>'+ end + '</td><td><button class="btn btn-default RemoveDaten" type="button"><i class="glyphicon glyphicon-minus-sign"></i></button></td></tr>') ;
                 tableRowLength++;
 
                 var table = document.getElementById("Table");
@@ -265,15 +280,20 @@
                 var splitEnd = end.split(":");
                 var dateEndUTC = Date.UTC(splitDates[2], splitDates[1] -1, splitDates[0], splitEnd[0], splitEnd[1],0,0);
 
+                counter++;
+
                 $.ajax({
                     type: "POST",
-                    url: "/turnierplan/erstellung/turniertag/api",
+                    url: "/turnierplan/erstellung/turniertag/api/add",
                     data: {
                         dateStartUTC,
                         dateEndUTC
                     }
+                }).done(function () {
+                    oTable.ajax.reload();
                 });
             }
-        } );
+        });
     </script>
+
 {% endblock %}

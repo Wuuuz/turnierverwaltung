@@ -55,7 +55,7 @@
                     <img src="{{ asset_url }}" alt="Turnier" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default button_startseite" role="button">Turnier</a></p>
+                        <p><a href="{{ path('turnierEdit') }}" class="btn btn-default button_startseite" role="button">Turnier</a></p>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@
                     <img src="{{ asset_url }}" alt="Anmeldungen" class="startseite bild_startseite"/>
                     {% endimage %}
                     <div class="caption">
-                        <p><a href="#" class="btn btn-default button_startseite" role="button">Anmeldungen</a></p>
+                        <p><a href="{{ path('anmeldungList') }}" class="btn btn-default button_startseite" role="button">Anmeldungen</a></p>
                     </div>
                 </div>
             </div>

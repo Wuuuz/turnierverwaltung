@@ -79,7 +79,7 @@ class Turniertag
     /**
      * Set uhrzEnde
      *
-     * @param string $uhrzEnde
+     * @param \DateTime $uhrzEnde
      *
      * @return Turniertag
      */
@@ -93,7 +93,7 @@ class Turniertag
     /**
      * Get uhrzEnde
      *
-     * @return string
+     * @return \DateTime
      */
     public function getUhrzEnde()
     {

@@ -29,7 +29,7 @@ class GruppenEinteilenController extends Controller
 
         $altersklassen = $this->getDoctrine()
             ->getRepository('TurnierplanBundle:Altersklasse')
-            ->findBy(array(), array('alter' => 'ASC', 'geschlecht' => 'ASC'));
+            ->findAll();
 
         foreach($altersklassen as $altersklasse)
         {

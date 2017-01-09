@@ -3,6 +3,7 @@
 namespace TeilnehmerBundle\Controller;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -45,8 +46,22 @@ class SchiedsrichterController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($sr);
-            $em->flush();
+
+            try {
+                $em->persist($sr);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Schiedsrichter:new.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -91,8 +106,22 @@ class SchiedsrichterController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($sr);
-            $em->flush();
+
+            try {
+                $em->persist($sr);
+                $em->flush();
+            }
+            catch(UniqueConstraintViolationException $e)
+            {
+                $this->addFlash(
+                    'danger',
+                    'Ein eindeutiges Attribut wurde doppelt vergeben!'
+                );
+
+                return $this->render('TeilnehmerBundle:Schiedsrichter:edit.html.twig', array(
+                    'form' => $form->createView()
+                ));
+            }
 
             $this->addFlash(
                 'info',
@@ -156,17 +185,17 @@ class SchiedsrichterController extends Controller
                     $em->flush();
                     $this->addFlash(
                         'info',
-                        'Schiedsrichter mit ID ' . $id . ' erfolgreich gelöscht!'
+                        'Schiedsrichter ' . $sr->getName() . ' erfolgreich gelöscht!'
                     );
                 } catch (ForeignKeyConstraintViolationException $e) {
                     $this->addFlash(
                         'danger',
-                        'Schiedsrichter mit ID ' . $id . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
+                        'Schiedsrichter ' . $sr->getName() . ' konnte nicht gelöscht werden! Grund: Fremdschlüsselbeziehung'
                     );
                 } catch (Exception $e) {
                     $this->addFlash(
                         'danger',
-                        'Schiedsrichter mit ID ' . $id . ' konnte nicht gelöscht werden!'
+                        'Schiedsrichter ' . $sr->getName() . ' konnte nicht gelöscht werden!'
                     );
                 }
             }

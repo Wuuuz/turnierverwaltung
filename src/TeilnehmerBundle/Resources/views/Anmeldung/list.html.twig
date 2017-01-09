@@ -45,66 +45,63 @@
 {% endblock %}
 
 {% block content %}
-
     {% for altersklasse in altersklassen %}
-        {% if altersklasse.MannschaftWrapper1 %}
-        <div class="input-group-btn-vertical">
-            <button class="btn btn-default center-block" type="button" data-toggle="collapse" data-target="#groupDataTables_{{ altersklasse.Id }}"><i class="glyphicon glyphicon-chevron-down"></i></button>
-            <p><center>{{ altersklasse.AlterklasseBez }}</center></p>
-        </div>
-        <div align="center">
-            <div id="groupDataTables_{{ altersklasse.Id }}" class="collapse panel panel-default">
-                <div class="panel-body panel-anmeldung">
 
-                    <div class="panel panel-default divTableLeft">
-                        <div class ="panel-heading text-center">
-                            {{ altersklasse.MannschaftWrapper1.GeschlechtBez }}
-                        </div>
-                        <div class="panel-body panel-anmeldung">
-                            <table class="table table-striped display table_anmeldeseite" cellspacing="0" width="100%" id="tableLeft">
-                                <thead>
-                                <tr>
-                                    <th>Vereine</th>
-                                </tr>
-                                </thead>
-                                <tbody>
+            <div class="input-group-btn-vertical">
+                <button class="btn btn-default center-block" type="button" data-toggle="collapse" data-target="#groupDataTables_{{ altersklasse.Id }}"><i class="glyphicon glyphicon-chevron-down"></i></button>
+                <p><center>{{ altersklasse.JugendBez }}</center></p>
+            </div>
+            <div align="center">
+                <div id="groupDataTables_{{ altersklasse.Id }}" class="collapse panel panel-default">
+                    <div class="panel-body panel-anmeldung">
+                        <div class="panel panel-default divTableLeft">
+                            <div class ="panel-heading text-center">
+                                {{ altersklasse.MannschaftWrapper1.GeschlechtBez }}
+                            </div>
+                            <div class="panel-body panel-anmeldung">
+                                <table class="table table-striped display table_anmeldeseite" cellspacing="0" width="100%" id="tableLeft">
+                                    <thead>
+                                    <tr>
+                                        <th>Vereine</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
 
-                                {% for mannschaft in altersklasse.MannschaftWrapper1.mannschaften %}
+                                    {% for mannschaft in altersklasse.MannschaftWrapper1.mannschaften %}
+                                        <tr>
+                                            <td>{{ mannschaft.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% if altersklasse.MannschaftWrapper2 %}
+                        <div class="panel panel-default divTableRight">
+                            <div class ="panel-heading text-center">
+                                {{ altersklasse.MannschaftWrapper2.GeschlechtBez }}
+                            </div>
+                            <div class="panel-body panel-anmeldung">
+                                <table class="table table-striped display" cellspacing="0" width="100%" id="tableRight">
+                                    <thead>
                                     <tr>
-                                        <td>{{ mannschaft.name }}</td>
+                                        <th>Vereine</th>
                                     </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {% for mannschaft in altersklasse.MannschaftWrapper2.mannschaften %}
+                                        <tr>
+                                            <td>{{ mannschaft.name }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                    {%  endif %}
-                    {% if altersklasse.MannschaftWrapper2 %}
-                    <div class="panel panel-default divTableRight">
-                        <div class ="panel-heading text-center">
-                            {{ altersklasse.MannschaftWrapper2.GeschlechtBez }}
-                        </div>
-                        <div class="panel-body panel-anmeldung">
-                            <table class="table table-striped display" cellspacing="0" width="100%" id="tableRight">
-                                <thead>
-                                <tr>
-                                    <th>Vereine</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for mannschaft in altersklasse.MannschaftWrapper2.mannschaften %}
-                                    <tr>
-                                        <td>{{ mannschaft.name }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        </div>
-    {% endif %}
 
     {% endfor %}
     <script>

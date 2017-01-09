@@ -18,4 +18,5 @@ use TeilnehmerBundle\Utils\AnmeldungMannschaftWrapper;
 
 class TurnierplanerstellungController extends Controller
 {
+
 }
